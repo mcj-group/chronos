@@ -26,7 +26,7 @@
 `endif
 import chronos::*;
 
-module color
+module color_enqueuer
 #(
 ) (
    input ap_clk,
