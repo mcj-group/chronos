@@ -1,16 +1,21 @@
 import sys, os
 if len(sys.argv) < 2:
-    print("Usage gen_config.py app <pipe>")
+    print("Usage gen_config.py app <pipe|split>")
     exit(0)
 app = sys.argv[1]
 pipe = 0
+split = 0
 if len(sys.argv) > 2:
     if (sys.argv[2].find("pipe") >= 0):
         pipe = 1;
+    elif (sys.argv[2].find("split") >= 0):
+        split = 1
 
 # Should be run from cl_chronos/design
 if pipe:
     configs = open("apps/"+app+"/config_pipe.vh")
+elif split:
+    configs = open("apps/"+app+"/config_split.vh")
 else:
     configs = open("apps/"+app+"/config.vh")
 arg_width = 0
