@@ -18,7 +18,7 @@
 # Usage help
 function usage
 {
-    echo "usage: aws_build_dcp_from_cl.sh [ [-script <vivado_script>] | [-strategy BASIC | DEFAULT | EXPLORE | TIMING | CONGESTION] [-clock_recipe_a A0 | A1 | A2] [-clock_recipe_b B0 | B1 | B2 | B3 | B4 | B5] [-clock_recipe_c C0 | C1 | C2 | C3] [-uram_option 2 | 3 | 4] [-vdefine macro1,macro2,macro3,.....,macrox] -foreground] [-notify] | [-h] | [-H] | [-help] ]"
+    echo "usage: aws_build_dcp_from_cl.sh [ [-script <vivado_script>] | [-strategy BASIC | DEFAULT | EXPLORE | TIMING | CONGESTION] [-clock_recipe_a A0 | A1 | A2] [-clock_recipe_b B0 | B1 | B2 | B3 | B4 | B5] [-clock_recipe_c C0 | C1 | C2 | C3] [-uram_option 2 | 3 | 4] [-vdefine macro1,macro2,macro3,.....,macrox] -foreground] [-notify] | [-h] | [-H] | [-help] | [-name <name>]"
     echo " "
     echo "By default the build is run in the background using nohup so that the"
     echo "process will not be terminated if the terminal window is closed."
@@ -46,6 +46,7 @@ expected_memory_usage=30000000
 uram_option=2
 vdefine=""
 module="cl_chronos"
+name=""
 
 # Use timestamp for logs and output files
 timestamp=$(date +"%y_%m_%d-%H%M%S") 
@@ -113,6 +114,9 @@ while [ "$1" != "" ]; do
         -h | -H | -help )       usage
                                 exit
                                 ;;
+	-name )			shift
+				timestamp="$1_$timestamp"
+				;;
         * )                     usage
                                 exit 1
     esac
