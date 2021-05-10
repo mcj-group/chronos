@@ -195,9 +195,9 @@ switch $strategy {
 # imitate encrypt.tcl without actually encrypting
 set HDK_SHELL_DESIGN_DIR $::env(HDK_SHELL_DESIGN_DIR)
 set CL_DIR $::env(CL_DIR)
-set TARGET_DIR $CL_DIR/build/src_post_encryption
+set TARGET_DIR /mnt/ephemeral/$timestamp
 set UNUSED_TEMPLATES_DIR $HDK_SHELL_DESIGN_DIR/interfaces
-exec rm -f $TARGET_DIR/*
+file mkdir $TARGET_DIR 
 file copy -force {*}[glob -nocomplain -- $CL_DIR/design/*.{v,sv,vh}]  $TARGET_DIR 
 file copy -force {*}[glob -nocomplain -- $CL_DIR/design/apps/sssp_hls/*.{v,sv,vh}]  $TARGET_DIR 
 file copy -force {*}[glob -nocomplain -- $CL_DIR/design/apps/sssp/*.{v,sv,vh}]  $TARGET_DIR 
@@ -208,6 +208,7 @@ file copy -force {*}[glob -nocomplain -- $CL_DIR/design/apps/maxflow/*.{v,sv,vh,
 file copy -force {*}[glob -nocomplain -- $CL_DIR/design/apps/color/*.{v,sv,vh,dat}]  $TARGET_DIR 
 file copy -force {*}[glob -nocomplain -- $CL_DIR/design/apps/silo/*.{v,sv,vh,dat}]  $TARGET_DIR
 file copy -force {*}[glob -nocomplain -- $CL_DIR/design/apps/color_split/*.{v,sv,vh,dat}] $TARGET_DIR
+file copy -force {*}[glob -nocomplain -- $CL_DIR/design/apps/mis_hls/*.{v,sv,vh,dat}] $TARGET_DIR
 file copy -force {*}[glob -nocomplain -- $UNUSED_TEMPLATES_DIR/*.inc]  $TARGET_DIR 
 
 #Encrypt source code

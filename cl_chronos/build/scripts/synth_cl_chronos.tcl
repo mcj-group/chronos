@@ -17,7 +17,7 @@ source $HDK_SHELL_DIR/build/scripts/aws_gen_clk_constraints.tcl
 #############################
 
 #Convenience to set the root of the RTL directory
-set ENC_SRC_DIR $CL_DIR/build/src_post_encryption
+set ENC_SRC_DIR $TARGET_DIR
 
 puts "AWS FPGA: ([clock format [clock seconds] -format %T]) Reading developer's Custom Logic files post encryption.";
 
