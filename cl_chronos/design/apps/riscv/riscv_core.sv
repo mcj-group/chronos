@@ -124,9 +124,7 @@ logic [31:0] dBus_cmd_addr;
 logic [1:0] dBus_cmd_size;
 logic [31:0] dBus_cmd_data;
 logic dBus_rsp_valid;
-logic [31:0] dBus_rsp_data;
-
-logic [31:0] debug_pc;
+logic [31:0] dBus_rsp_payload_data ;
 
 logic rst_core;
 
@@ -184,7 +182,7 @@ always_ff @(posedge clk) begin
          abort_running_task_q <= 1'b0;
       end else if (abort_running_task) begin
          abort_running_task_q <= 1'b1;
-      end else if ((state == ABORT_TASK & (debug_pc == 32'h80000000)) |
+      end else if ((state == ABORT_TASK) |
                    (state_next == NEXT_TASK) ) begin
          abort_running_task_q <= 1'b0;
       end
@@ -359,9 +357,7 @@ always_comb begin
          end
       end
       ABORT_TASK: begin
-         if (debug_pc == 32'h80000000) begin
-            state_next = WAIT_CORE;
-         end
+         state_next = WAIT_CORE;
       end
 
    endcase
@@ -480,7 +476,6 @@ always_ff @(posedge clk) begin
          CORE_NUM_ENQ     : reg_bus.rdata <= num_enqueues;
          CORE_NUM_DEQ     : reg_bus.rdata <= num_dequeues;
          CORE_STATE       : reg_bus.rdata <= state;
-         CORE_PC          : reg_bus.rdata <= debug_pc;
          DEBUG_CAPACITY : reg_bus.rdata <= log_size;
       endcase
    end else begin
@@ -681,24 +676,24 @@ always_comb begin
 end 
 always_comb begin
    dBus_rsp_valid = 1'b0;
-   dBus_rsp_data = 'x;
+   dBus_rsp_payload_data  = 'x;
    if (state == IO_READ) begin
       casex (io_read_addr) 
-         RISCV_DEQ_TASK      : dBus_rsp_data = task_in.ts;
-         RISCV_DEQ_TASK_OBJECT : dBus_rsp_data = task_in.object; 
-         RISCV_DEQ_TASK_TTYPE: dBus_rsp_data = task_in.ttype; 
-         RISCV_DEQ_TASK_ARG0 : dBus_rsp_data = task_in.args[31:0]; 
-         RISCV_DEQ_TASK_ARG1 : dBus_rsp_data = task_in.args[63:32]; 
+         RISCV_DEQ_TASK      : dBus_rsp_payload_data  = task_in.ts;
+         RISCV_DEQ_TASK_OBJECT : dBus_rsp_payload_data  = task_in.object; 
+         RISCV_DEQ_TASK_TTYPE: dBus_rsp_payload_data  = task_in.ttype; 
+         RISCV_DEQ_TASK_ARG0 : dBus_rsp_payload_data  = task_in.args[31:0]; 
+         RISCV_DEQ_TASK_ARG1 : dBus_rsp_payload_data  = task_in.args[63:32]; 
          RISCV_DEQ_TASK_ARG  : begin 
             for (integer i =0;i <(ARG_WIDTH/32);i++) begin
                if (io_read_addr[7:2] == i ) begin
-                  dBus_rsp_data = task_in.args[i*32 +: 32]; 
+                  dBus_rsp_payload_data  = task_in.args[i*32 +: 32]; 
                end
             end
          end
-         RISCV_CUR_CYCLE     : dBus_rsp_data = cur_cycle; 
-         RISCV_TILE_ID       : dBus_rsp_data = TILE_ID; 
-         RISCV_CORE_ID       : dBus_rsp_data = CORE_ID; 
+         RISCV_CUR_CYCLE     : dBus_rsp_payload_data  = cur_cycle; 
+         RISCV_TILE_ID       : dBus_rsp_payload_data  = TILE_ID; 
+         RISCV_CORE_ID       : dBus_rsp_payload_data  = CORE_ID; 
       endcase
       if (io_read_addr == RISCV_DEQ_TASK) begin
          // if task was aborted don't respond yet 
@@ -708,7 +703,7 @@ always_comb begin
       end
    end else begin
       dBus_rsp_valid = dBus_in.rvalid;
-      dBus_rsp_data = dBus_in.rdata[31:0];
+      dBus_rsp_payload_data  = dBus_in.rdata[31:0];
    end
 
 end
@@ -733,12 +728,11 @@ end
       .dBus_cmd_payload_address  (dBus_cmd_addr),
       .dBus_cmd_payload_size     (dBus_cmd_size),
       .dBus_cmd_payload_data     (dBus_cmd_data),
-      .dBus_rsp_ready            (dBus_rsp_valid),
-      .dBus_rsp_data             (dBus_rsp_data),
-      .dBus_rsp_error            (1'b0),
+      .dBus_rsp_valid            (dBus_rsp_valid),
+      .dBus_rsp_payload_data     (dBus_rsp_payload_data ),
+      .dBus_rsp_payload_error    (1'b0),
       .clk                       (clk),
-      .reset                     (rst_core),
-      .debug_pc                  (debug_pc)
+      .reset                     (rst_core)
    );
 
    axi_decoder #(
@@ -784,11 +778,10 @@ if (CORE_LOGGING[TILE_ID] & (CORE_ID == 0)) begin
    typedef struct packed {
     
       logic [63:0] wstrb;
-      logic [31:0] debug_pc;
 
       logic [31:0] dBus_cmd_addr;
       logic [31:0] dBus_cmd_data;
-      logic [31:0] dBus_rsp_data;
+      logic [31:0] dBus_rsp_payload_data ;
 
       logic [15:0] awid;
       logic [15:0] arid;
@@ -838,8 +831,7 @@ if (CORE_LOGGING[TILE_ID] & (CORE_ID == 0)) begin
       log_word.araddr = l1.araddr; 
       log_word.wdata =  l1.wdata; 
       log_word.rdata = l1.rdata; 
-      log_word.state = state; 
-      log_word.debug_pc  = debug_pc; 
+      log_word.state = state;
 
       log_word.awvalid  = l1.awvalid;
       log_word.awready  = l1.awready;
@@ -865,7 +857,7 @@ if (CORE_LOGGING[TILE_ID] & (CORE_ID == 0)) begin
       log_word.dBus_rsp_valid    = dBus_rsp_valid  ;
       log_word.dBus_cmd_addr    = dBus_cmd_addr  ;
       log_word.dBus_cmd_data    = dBus_cmd_data  ;
-      log_word.dBus_rsp_data    = dBus_rsp_data  ;
+      log_word.dBus_rsp_payload_data     = dBus_rsp_payload_data   ;
       log_word.dBus_cmd_size = dBus_cmd_size;
       
       if (debug_mode) begin
