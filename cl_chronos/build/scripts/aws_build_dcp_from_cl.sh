@@ -33,6 +33,13 @@ function usage
     echo "AWS instance, for example on a GUI desktop on the instance."
 }
 
+export CL_DIR=$PWD/../..
+export C_ROOT=$PWD/../../..
+
+export HDK_DIR=$C_ROOT/aws-fpga/hdk
+export HDK_COMMON_DIR=$HDK_DIR/common
+export HDK_SHELL_DIR=$HDK_COMMON_DIR/shell_stable
+
 # Default arguments for script and strategy
 strategy=DEFAULT
 clock_recipe_a=A0

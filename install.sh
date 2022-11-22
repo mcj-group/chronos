@@ -23,4 +23,7 @@ sudo yum install kernel kernel-devel
 sudo modprobe xdma
 
 ## Needed for plotting
-sudo yum install python-matplotlib
+sudo apt-get install python-matplotlib
+
+## Needed for xsim
+sudo apt-get install libncurses5
