@@ -225,6 +225,7 @@ void solve_rbp(MRF_CSR *mrf_in, double sensitivity_in) {
             break;
          case UPDATE_MESSAGE_TASK:
             update_message_task(ts, (message_id) object, (double) arg0, (double) arg1);
+            break;
          case UPDATE_LOG_PRODUCT_IN_TASK:
             update_log_product_in_task(ts, (node_id) object, (double) arg0, (double) arg1, (double) arg2, (double) arg3);
             break;

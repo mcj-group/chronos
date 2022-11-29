@@ -1,17 +1,17 @@
 #include "../include/simulator_fpu.h"
 #include "mrf_CSR.h"
 
-#define PRIORITIZE_TASK    0
-#define FETCH_REVERSE_LOG_MU_0_TASK    1
-#define FETCH_LOG_PRODUCT_IN_0_TASK   2
-#define FETCH_REVERSE_LOG_MU_1_TASK    3
-#define FETCH_LOG_PRODUCT_IN_1_TASK   4
-#define UPDATE_LOOKAHEAD_TASK    5
-#define ENQUEUE_UPDATE_TASK   6
-#define UPDATE_TASK  7
-#define UPDATE_MESSAGE_TASK 8
-#define UPDATE_LOG_PRODUCT_IN_TASK 9
-#define PROPAGATE_TASK  10
+#define PRIORITIZE_TASK    1
+#define FETCH_REVERSE_LOG_MU_0_TASK    2
+#define FETCH_LOG_PRODUCT_IN_0_TASK   3
+#define FETCH_REVERSE_LOG_MU_1_TASK    4
+#define FETCH_LOG_PRODUCT_IN_1_TASK   5
+#define UPDATE_LOOKAHEAD_TASK    6
+#define ENQUEUE_UPDATE_TASK   7
+#define UPDATE_TASK  8
+#define UPDATE_MESSAGE_TASK 9
+#define UPDATE_LOG_PRODUCT_IN_TASK 10
+#define PROPAGATE_TASK  11
 
 static constexpr uint64_t LENGTH = MRF_CSR::LENGTH;
 
