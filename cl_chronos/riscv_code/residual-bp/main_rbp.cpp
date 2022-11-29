@@ -185,6 +185,12 @@ void solve_rbp(MRF_CSR *mrf_in, double sensitivity_in) {
    mrf = mrf_in;
    sensitivity = sensitivity_in;
 
+   uint64_t num_messages = mrf->getNumMessages();
+
+   for (uint64_t i = 0; i < num_messages; i++) {
+      enq_task_arg0(PRIORITIZE_TASK, 0, i);
+   }
+
    // Dereference the pointers to array base addresses.
    // ( The '<<2' is because graph_gen writes the word number, not the byte)
 
@@ -226,6 +232,7 @@ void solve_rbp(MRF_CSR *mrf_in, double sensitivity_in) {
             propagate_task(ts, (node_id) object);
             break;
          default:
+            return;
             break;
       }
 
