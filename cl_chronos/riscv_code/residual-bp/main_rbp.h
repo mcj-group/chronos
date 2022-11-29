@@ -9,8 +9,9 @@
 #define UPDATE_LOOKAHEAD_TASK    5
 #define ENQUEUE_UPDATE_TASK   6
 #define UPDATE_TASK  7
-#define UPDATE_LOG_PRODUCT_IN_TASK 8
-#define PROPAGATE_TASK  9
+#define UPDATE_MESSAGE_TASK 8
+#define UPDATE_LOG_PRODUCT_IN_TASK 9
+#define PROPAGATE_TASK  10
 
 static constexpr uint64_t LENGTH = MRF_CSR::LENGTH;
 
@@ -37,6 +38,8 @@ void enqueue_update_task(uint64_t ts, message_id m_id, double result_0, double r
 uint64_t timeline(double priority);
 
 void update_task(uint64_t ts, message_id m_id, double result_0, double result_1);
+
+void update_message_task(uint64_t ts, message_id m_id, double result_0, double result_1);
 
 void update_log_product_in_task(uint64_t ts, node_id n_id, double old_log_mu_0, double old_log_mu_1, double new_log_mu_0, double new_log_mu_1);
 

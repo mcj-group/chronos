@@ -124,12 +124,19 @@ uint64_t timeline(double priority) {
 
 void update_task(uint64_t ts, message_id m_id, double result_0, double result_1) {
    std::array<double,LENGTH> new_log_mu = mrf->getLookAhead(m_id);
-   std::array<double,LENGTH> old_log_mu = mrf->getMessageVal(m_id);
    if ((new_log_mu[0] != result_0) || (new_log_mu[1] != result_1)) {
       // there is more up to date enqueued 
       return;
    }
 
+   enq_task_arg2(UPDATE_MESSAGE_TASK, ts, (uint64_t) m_id, (double) new_log_mu[0], (double) new_log_mu[1]);
+}
+
+void update_message_task(uint64_t ts, message_id m_id, double result_0, double result_1) {
+   std::array<double,LENGTH> old_log_mu = mrf->getMessageVal(m_id);
+   std::array<double,LENGTH> new_log_mu;
+   new_log_mu[0] = result_0;
+   new_log_mu[1] = result_1;
    // record in undo log
    Message* m = mrf->getMessage(m_id);
    undo_log_write((uint64_t *) &(m->logMu[0]), m->logMu[0]);
@@ -210,6 +217,8 @@ void solve_rbp(MRF_CSR *mrf_in, double sensitivity_in) {
          case UPDATE_TASK:
             update_task(ts, (message_id) object, (double) arg0, (double) arg1);
             break;
+         case UPDATE_MESSAGE_TASK:
+            update_message_task(ts, (message_id) object, (double) arg0, (double) arg1);
          case UPDATE_LOG_PRODUCT_IN_TASK:
             update_log_product_in_task(ts, (node_id) object, (double) arg0, (double) arg1, (double) arg2, (double) arg3);
             break;
