@@ -25,21 +25,21 @@
 ARG_WIDTH 128
  
 APP_ID 256
-RISCV_APP sssp
+RISCV_APP sssp_fs
 
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
-mt_core riscv_core 2
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1
+mt_core riscv_core 1

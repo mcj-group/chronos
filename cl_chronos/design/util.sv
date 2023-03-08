@@ -631,7 +631,7 @@ module free_list #(
          rd_ptr <= 0;
       end else begin
          if (wr_en) begin
-            assert(!full | rd_en)  else $error("wr when full");
+            assert(!full | rd_en)  else $error("wr free_list when full");
             mem[wr_ptr[LOG_DEPTH-1:0]] <= wr_data;
             wr_ptr <= wr_ptr + 1;
          end

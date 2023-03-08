@@ -42,7 +42,7 @@ logic [63:0] log_start_addr;
 logic [511:0] log_entry;
 
 logic [31:0] ocl_addr, ocl_data; 
-integer dist_actual, dist_ref;
+logic [31:0] dist_actual, dist_ref;
 integer num_errors;
 
 localparam HOST_SPILL_AREA = 32'h1000000;
@@ -67,6 +67,7 @@ initial begin
    
    // If using proper DDR models, wait for them to initialize
    `ifndef SIMPLE_MEMORY
+      $display("ndef SIMPLE_MEMORY");
        tb.nsec_delay(1000);
        tb.poke_stat(.addr(8'h0c), .ddr_idx(0), .data(32'h0000_0000));
        tb.poke_stat(.addr(8'h0c), .ddr_idx(1), .data(32'h0000_0000));
@@ -82,7 +83,9 @@ initial begin
    case (APP_NAME) 
       "des"     : input_file = "input_net";
       "sssp"    : input_file = "input_graph";
+      "sssp_fs"    : input_file = "input_graph";
       "sssp_hls": input_file = "input_graph";
+      "residual_bp" : input_file = "input_graph";
       "astar"   : input_file = "input_astar";
       "color"   : input_file = "input_color";
       "maxflow" : input_file = "input_maxflow";
@@ -118,7 +121,7 @@ initial begin
          task_enq(1, enq_object, enq_ts, 1, enq_args, 0);
       end
    end
-   if (APP_NAME == "sssp" | APP_NAME == "sssp_hls") begin
+   if (APP_NAME == "sssp" | APP_NAME == "sssp_hls" | APP_NAME == "sssp_fs") begin
       task_enq(0, file[7], 0, 0, 0, 0);
    end      
    if (APP_NAME == "color") begin
@@ -192,7 +195,7 @@ initial begin
       end
    end
 
-   if (APP_NAME == "sssp" | APP_NAME == "sssp_hls") begin
+   if (APP_NAME == "sssp" | APP_NAME == "sssp_hls" | APP_NAME == "sssp_fs") begin
       BASE_END = file[8];
       read_cl_memory( .host_addr(BASE_END*4), .cl_addr(file[5]*4), .len(file[1]*4));
       for (int i=0;i<file[1];i++) begin
@@ -202,10 +205,15 @@ initial begin
          dist_actual[31:24] = tb.hm_get_byte( (BASE_END + i)* 4+ 3);
          dist_ref = file [file[6]+i];
          if (dist_actual != dist_ref) num_errors++;
-         $display("vid:%3d dist:%3d, ref:%3d, %s, num_errors%2d", i, dist_actual, dist_ref,
+         if (APP_NAME == "sssp_fs")
+            $display("vid:%3d dist:%f, ref:%f, %s, num_errors%2d", i, $bitstoshortreal(dist_actual), $bitstoshortreal(dist_ref),
+               dist_actual == dist_ref ? "MATCH" : "FAIL", num_errors); 
+         else
+            $display("vid:%3d dist:%3d, ref:%3d, %s, num_errors%2d", i, dist_actual, dist_ref,
                dist_actual == dist_ref ? "MATCH" : "FAIL", num_errors); 
       end
    end
+
    if (APP_NAME == "astar") begin
       BASE_END = file[10];
       read_cl_memory( .host_addr(BASE_END*4), .cl_addr(file[5]*4), .len(file[1]*4));
@@ -435,6 +443,7 @@ task load_riscv_program;
    string line; 
    logic [31:0] _main;
    logic [31:0] boot_code [0:3];
+   $display("load_riscv_program begin");
    offset = 0;
    fid = $fopen("input_code.hex", "r");
 `ifdef CACHE_LINE_SIZED_SIMPLE_MEMORY
@@ -525,11 +534,11 @@ task load_riscv_program;
       end
    end
 `endif
+$display("load_riscv_program end");
 endtask
 
-
 task read_and_transfer_input_file;
-   
+   $display("read_and_transfer_input_file begin");
    fid = $fopen(input_file, "rb");
    if (fid==0) begin
       $display("File %s not found", input_file);
@@ -602,6 +611,7 @@ task read_and_transfer_input_file;
       tb.hm_put_byte(.addr(i*4+1), .d(file[i][15: 8]));
       tb.hm_put_byte(.addr(i*4+2), .d(file[i][23:16]));
       tb.hm_put_byte(.addr(i*4+3), .d(file[i][31:24]));
+      $display("Line %d: %x%x%x%x", i, file[i][31:24], file[i][23:16], file[i][15: 8], file[i][7: 0]);
    end
    
    
@@ -665,14 +675,15 @@ task read_and_transfer_input_file;
          $display("[%t] : *** ERROR *** Timeout waiting for dma transfers from cl", $realtime);
       end
    `endif
+   $display("read_and_transfer_input_file end");
 
 endtask
 
 
 task initialize_spilling_structures;
-
    // Initialize Splitter Stack and scratchpad
    integer i;
+   $display("initialize_spilling_structures begin");
    for (i=0;i<4;i++) begin
       tb.hm_put_byte(.addr(HOST_SPILL_AREA + STACK_PTR_ADDR_OFFSET + i), .d(0));
    end
@@ -789,6 +800,7 @@ task initialize_spilling_structures;
                 .id(AXI_ID), .size(DataSize::UINT16), .intf(AxiPort::PORT_OCL)); 
    end
 
+   $display("initialize_spilling_structures end");
 endtask
    
 task flush_caches; 

@@ -146,7 +146,7 @@ package chronos;
    // Cache parameters 
    // Total Address Space Size = 16GB = 34 bits 
    parameter ADDR_BITS = 34;
-   parameter CACHE_BYTE_WIDTH = 6; // 64 bytes per line
+   parameter CACHE_BYTE_WIDTH = 4; // 16 bytes per line
    parameter LOG_LOG_DEPTH = 14; // Size of each on-chip debugging logs
    
    parameter CQ_CONFIG = 1; // Can dynamically configure CQ sizes 

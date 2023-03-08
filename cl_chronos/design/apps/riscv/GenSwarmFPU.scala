@@ -9,18 +9,14 @@ import vexriscv.{VexRiscv, VexRiscvConfig, plugin}
 /**
  * Created by spinalvm on 15.06.17.
  */
-object GenChronos extends App{
+object GenChronosCacheDebugFPU extends App{
   def cpu() = new VexRiscv(
     config = VexRiscvConfig(
       plugins = List(
-        new PcManagerSimplePlugin(
-          resetVector = 0x80000000l,
-          relaxedPcCalculation = false
-        ),
         new IBusCachedPlugin(
-          prediction = DYNAMIC,
+          prediction = STATIC,
           config = InstructionCacheConfig(
-            cacheSize = 4096,
+            cacheSize = 1024*4,
             bytePerLine =32,
             wayCount = 1,
             addressWidth = 32,
@@ -31,15 +27,12 @@ object GenChronos extends App{
             asyncTagMemory = false,
             twoCycleRam = true,
             twoCycleCache = true
-          ),
-          memoryTranslatorPortConfig = MmuPortConfig(
-            portTlbSize = 4
           )
         ),
         new DBusCachedPlugin(
           config = new DataCacheConfig(
-            cacheSize         = 4096,
-            bytePerLine       = 32,
+            cacheSize         = 4, // need to set to 4 to so that every cache access is miss
+            bytePerLine       = 4, // need to set to 4 to so that cache line can be filled in one cycle
             wayCount          = 1,
             addressWidth      = 32,
             cpuDataWidth      = 32,
@@ -47,11 +40,12 @@ object GenChronos extends App{
             catchAccessError  = true,
             catchIllegal      = true,
             catchUnaligned    = true
-          ),
-          memoryTranslatorPortConfig = MmuPortConfig(
-            portTlbSize = 6
           )
         ),
+        // new DBusSimplePlugin(
+        //     catchAddressMisaligned = false,
+        //     catchAccessFault = false
+        // ),
         new StaticMemoryTranslatorPlugin(
           ioRange      = _(31 downto 28) === 0xF
         ),
@@ -82,6 +76,7 @@ object GenChronos extends App{
           p = new FpuParameter(withDouble = false)
         ),
         new CsrPlugin(CsrPluginConfig.small(0x80000000l)),
+        new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
         new BranchPlugin(
           earlyBranch = true,
           catchAddressMisaligned = true
