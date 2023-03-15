@@ -21,8 +21,14 @@
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "main.h"
+#include <math.h>
 #include "../include/chronos.h"
+
+#define UINT32_MAX		      (4294967295U)
+
+#define INIT_TASK             0
+#define REPRIORITIZE_TASK     1
+#define UPDATE_MESSAGE_TASK   2
 
 typedef float float_t;
 
@@ -35,10 +41,20 @@ typedef struct Message {
 
 } message_t;
 
+typedef struct Node {
+   float_t logNodePotentials[2];
+} node_t;
+
+typedef struct Edge {
+   float_t logPotentials[4];
+} edge_t;
+
+uint32_t *data;
 
 float_t sensitivity;
 uint32_t numV;
 uint32_t numE;
+uint32_t numM;
 
 uint32_t BASE_EDGE_INDICES;
 uint32_t BASE_EDGE_DEST;
@@ -53,23 +69,87 @@ uint32_t BASE_CONVERGED;
 uint32_t BASE_END;
 
 // CSR format of RBP graph
-float_t* dist;
-uint32_t* edge_offset;
-uint32_t* edge_neighbors;
-message_t* messages;
+uint32_t *edge_indices;
+uint32_t *edge_dest;
+uint32_t *reverse_edge_indices;
+uint32_t *reverse_edge_dest;
+uint32_t *reverse_edge_id;
+message_t *messages;
+edge_t *edges;
+node_t *nodes;
+message_t *converged_messages;
 
-void update_message_task(uint ts, uint mid) {
+uint32_t timestamp(float_t dist) {
+   uint32_t SCALING_FACTOR = 1 << 29;
+   float_t scaled = dist * SCALING_FACTOR;
+   uint32_t ts = UINT32_MAX - 8 - ((uint32_t) scaled);
+   return ts;
+}
 
-   float_t old_logMu[2];
+float_t distance(float_t *log1, float_t *log2) {
+   float_t ans = 0.0;
+   for (uint32_t i = 0; i < 2; i++) {
+      ans += abs(exp(log1[i]) - exp(log2[i]));
+   }
+   return ans;
+}
 
-   for (uint32_t it = 0; it < 2; it++) {
-      old_logMu[it] = messages[mid].logMu[it];
-      messages[mid].logMu[it] = messages[mid].lookAhead[it];
-      undo_log_write((uint *) &(messages[mid].logMu[it]), *((uint *) (&old_logMu[it])));
+void init_task(uint ts, uint mid) {
+   float_t residual = distance(messages[mid].logMu, messages[mid].lookAhead);
+
+   if (residual > sensitivity) {
+      uint update_ts = timestamp(residual);
+
+      enq_task_arg2(UPDATE_MESSAGE_TASK, update_ts, mid, 
+                  *((uint *) &(messages[mid].lookAhead[0])), 
+                  *((uint *) &(messages[mid].lookAhead[1]))
+                  );
+   }
+}
+
+void update_message_task(uint ts, uint mid,  uint enqueued_lookAhead_0, uint enqueued_lookAhead_1) {
+   // check if enqueued version is the latest
+   float_t enqueued_lookAhead[2];
+   enqueued_lookAhead[0] = *((float_t *) &enqueued_lookAhead_0);
+   enqueued_lookAhead[1] = *((float_t *) &enqueued_lookAhead_1);
+   if ((messages[mid].lookAhead[0] != enqueued_lookAhead[0]) || (messages[mid].lookAhead[1] != enqueued_lookAhead[1])) {
+      // not most up-to-date copy of update task
+      return;
    }
 
-   for ddd {
-      enq_task_arg2(REPRIORITIZE_TASK, ts + 1, mid_prop, *((uint *) &delta_logMu[0]), *((uint *) &delta_logMu[1]));
+   // update logMu
+   float_t old_logMu[2];
+
+   old_logMu[0] = messages[mid].logMu[0];
+   messages[mid].logMu[0] = enqueued_lookAhead[0];
+   undo_log_write((uint *) &(messages[mid].logMu[0]), *((uint *) (&old_logMu[0])));
+
+   old_logMu[1] = messages[mid].logMu[1];
+   messages[mid].logMu[1] = enqueued_lookAhead[1];
+   undo_log_write((uint *) &(messages[mid].logMu[1]), *((uint *) (&old_logMu[1])));
+
+   // calculate change in logMu for propagation
+   float_t delta_logMu[2];
+   delta_logMu[0] = messages[mid].logMu[0] - old_logMu[0];
+   delta_logMu[1] = messages[mid].logMu[1] - old_logMu[1];
+
+   // propagate 
+   uint32_t j = messages[mid].j;
+   uint32_t CSR_position = edge_indices[j];
+   uint32_t CSR_end = edge_indices[j + 1];
+   uint32_t CSC_position = reverse_edge_indices[j];
+   uint32_t CSC_end = reverse_edge_indices[j + 1];
+   
+   uint32_t affected_mid = 0;
+   while ((CSR_position < CSR_end) || (CSC_position < CSC_end)) {
+      if (CSR_position < CSR_end) {
+         affected_mid = CSR_position * 2;
+         CSR_position++;
+      } else {
+         affected_mid = reverse_edge_id[CSC_position] * 2 + 1;
+         CSC_position++;
+      }
+      enq_task_arg2(REPRIORITIZE_TASK, ts + 1, affected_mid, *((uint *) &delta_logMu[0]), *((uint *) &delta_logMu[1]));
    }
 }
 
@@ -86,67 +166,71 @@ void reprioritize_task(uint ts, uint mid, uint delta_logMu_0, uint delta_logMu_1
    messages[mid].lookAhead[0] = old_lookAhead[1] + *((float_t *) &delta_logMu_1);
    undo_log_write((uint *) &(messages[mid].lookAhead[1]), *((uint *) (&old_lookAhead[1])));
 
-   update_ts = timestamp(mid);
+   float_t residual = distance(messages[mid].logMu, messages[mid].lookAhead);
 
-   enq_task_arg0(UPDATE_MESSAGE_TASK, update_ts, mid);
+   if (residual > sensitivity) {
+      update_ts = timestamp(residual);
+
+      enq_task_arg2(UPDATE_MESSAGE_TASK, update_ts, mid, 
+                  *((uint *) &(messages[mid].lookAhead[0])), 
+                  *((uint *) &(messages[mid].lookAhead[1]))
+                  );
+   }
 }
 
 int main() {
    chronos_init();
 
+   data = 0;
+
+   // Extract base addresses from input file
+   numV = data[0];
+   numE = data[1];
+   numM = 2 * numE;
+   BASE_EDGE_INDICES = data[3];
+   BASE_EDGE_DEST = data[4];
+   BASE_EDGES = data[5];
+   BASE_REVERSE_EDGE_INDICES = data[6];
+   BASE_REVERSE_EDGE_DEST = data[7];
+   BASE_REVERSE_EDGE_ID = data[8];
+   BASE_NODES = data[9];
+   BASE_MESSAGES = data[10];
+   BASE_CONVERGED = data[11];
+   sensitivity = *((float *) (&data[12]));
+   BASE_END = data[12];
+
    // Dereference the pointers to array base addresses.
-   // ( The '<<2' is because graph_gen writes the word number, not the byte)
-   dist = (float*) ((*(uint32_t *) (ADDR_BASE_DIST))<<2) ;
-   edge_offset  =(uint32_t*) ((*(int *)(ADDR_BASE_EDGE_OFFSET))<<2) ;
-   edge_neighbors  =(uint32_t*) ((*(int *)(ADDR_BASE_NEIGHBORS))<<2) ;
+   edge_indices = &data[BASE_EDGE_INDICES];
+   edge_dest = &data[BASE_EDGE_DEST];
+   reverse_edge_indices = &data[BASE_REVERSE_EDGE_INDICES];
+   reverse_edge_dest = &data[BASE_REVERSE_EDGE_DEST];
+   reverse_edge_id = &data[BASE_REVERSE_EDGE_ID];
+   messages = (message_t *) &data[BASE_MESSAGES];
+   edges = (edge_t *) &data[BASE_EDGES];
+   nodes = (node_t *) &data[BASE_NODES];
+   converged_messages = (message_t *) &data[BASE_CONVERGED];
 
-   for (uint32_t i = 0; i < num_messages; i++) {
-      enq_task_arg0(INITIALIZE_TASK, 0, i); // initialize task calculates initial lookaheads for each message
+   for (uint32_t i = 0; i < numM; i++) {
+      enq_task_arg0(INIT_TASK, 0, i); // initialize task calculates initial lookaheads for each message
    }
-
    // Dereference the pointers to array base addresses.
    // ( The '<<2' is because graph_gen writes the word number, not the byte)
 
    while (1) {
-      uint32_t ttype, ts, object; 
-      double arg0, arg1, arg2, arg3;
-      deq_task_arg4(&ttype, &ts, &object, &arg0, &arg1, &arg2, &arg3);
+      uint ttype, ts, object; 
+      uint arg0, arg1;
+      deq_task_arg2(&ttype, &ts, &object, &arg0, &arg1);
       switch(ttype){
-         case PRIORITIZE_TASK:
-            prioritize_task(ts, (message_id) object);
+         case INIT_TASK:
+            init_task(ts, object);
             break;
-         case FETCH_REVERSE_LOG_MU_0_TASK:
-            fetch_reverse_log_mu_0_task(ts, (message_id) object, (message_id) arg0);
-            break;
-         case FETCH_LOG_PRODUCT_IN_0_TASK:
-            fetch_log_product_in_0_task(ts, (node_id) object, (double) arg0, (message_id) arg1, (message_id) arg2);
-            break;
-         case FETCH_REVERSE_LOG_MU_1_TASK:
-            fetch_reverse_log_mu_1_task(ts, (message_id) object, (double) arg0, arg1, (message_id) arg2);
-            break;
-         case FETCH_LOG_PRODUCT_IN_1_TASK:
-            fetch_log_product_in_1_task(ts, (node_id) object, (double) arg0, (double) arg1, (message_id) arg2);
-            break;
-         case UPDATE_LOOKAHEAD_TASK:
-            update_look_ahead_task(ts, (message_id) object, (double) arg0, (double) arg1);
-            break;
-         case ENQUEUE_UPDATE_TASK:
-            enqueue_update_task(ts, (message_id) object, (double) arg0, (double) arg1);
-            break;
-         case UPDATE_TASK:
-            update_task(ts, (message_id) object, (double) arg0, (double) arg1);
+         case REPRIORITIZE_TASK:
+            reprioritize_task(ts, object, arg0, arg1);
             break;
          case UPDATE_MESSAGE_TASK:
-            update_message_task(ts, (message_id) object, (double) arg0, (double) arg1);
-            break;
-         case UPDATE_LOG_PRODUCT_IN_TASK:
-            update_log_product_in_task(ts, (node_id) object, (double) arg0, (double) arg1, (double) arg2, (double) arg3);
-            break;
-         case PROPAGATE_TASK:
-            propagate_task(ts, (node_id) object);
+            update_message_task(ts, object, arg0, arg1);
             break;
          default:
-            return;
             break;
       }
 

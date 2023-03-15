@@ -19,25 +19,21 @@ INCLUDES = -I$(SDK_DIR)/userspace/include
 
 #CC = riscv-none-embed-gcc
 #CFLAGS = -march=rv32i -mabi=ilp32 -T linker_script 
-#CC = riscv64-unknown-elf-g++
-#CFLAGS = -march=rv32i -mabi=ilp32 -T linker_script -DRISCV -specs=nosys.specs
-CC = g++
+CC = riscv64-unknown-elf-g++
+CFLAGS = -march=rv32if -mabi=ilp32f  -T linker_script -DRISCV -specs=nosys.specs 
 
 
-SRC = host.cpp
+SRC = main.c 
 OBJ = $(SRC:.c=.o)
-BIN = host 
+BIN = main 
 
 all: $(BIN) 
 
 $(BIN): $(OBJ)
-	$(CC) $(CFLAGS) -O3 -o $^ $(SRC)  
-# 	riscv-none-embed-objdump -D main.o > main.dump
-# 	riscv-none-embed-objcopy --output-target=ihex main.o main.hex
-
-host: host.cpp
-	g++ -O3 host.cpp -o host
+	$(CC) $(CFLAGS) -O3 -o $^ $(SRC) -lm
+	riscv64-unknown-elf-objdump -D main.o > main.dump
+	riscv64-unknown-elf-objcopy --output-target=ihex main.o main.hex
 
 clean:
-	rm -f *.o $(BIN)
+	rm -f *.o *.hex *.dump $(BIN)
 
