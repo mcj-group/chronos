@@ -39,15 +39,9 @@ typedef struct Message {
    float_t logMu[2];
    float_t lookAhead[2];
 
+   uint32_t padding[2]; // padding for cache line alignment
+
 } message_t;
-
-typedef struct Node {
-   float_t logNodePotentials[2];
-} node_t;
-
-typedef struct Edge {
-   float_t logPotentials[4];
-} edge_t;
 
 uint32_t *data;
 
@@ -58,11 +52,9 @@ uint32_t numM;
 
 uint32_t BASE_EDGE_INDICES;
 uint32_t BASE_EDGE_DEST;
-uint32_t BASE_EDGES;
 uint32_t BASE_REVERSE_EDGE_INDICES;
 uint32_t BASE_REVERSE_EDGE_DEST;
 uint32_t BASE_REVERSE_EDGE_ID;
-uint32_t BASE_NODES;
 uint32_t BASE_MESSAGES;
 uint32_t BASE_CONVERGED;
 
@@ -75,8 +67,6 @@ uint32_t *reverse_edge_indices;
 uint32_t *reverse_edge_dest;
 uint32_t *reverse_edge_id;
 message_t *messages;
-edge_t *edges;
-node_t *nodes;
 message_t *converged_messages;
 
 uint32_t timestamp(float_t dist) {
@@ -163,7 +153,7 @@ void reprioritize_task(uint ts, uint mid, uint delta_logMu_0, uint delta_logMu_1
    undo_log_write((uint *) &(messages[mid].lookAhead[0]), *((uint *) (&old_lookAhead[0])));
 
    old_lookAhead[1] = messages[mid].lookAhead[1];
-   messages[mid].lookAhead[0] = old_lookAhead[1] + *((float_t *) &delta_logMu_1);
+   messages[mid].lookAhead[1] = old_lookAhead[1] + *((float_t *) &delta_logMu_1);
    undo_log_write((uint *) &(messages[mid].lookAhead[1]), *((uint *) (&old_lookAhead[1])));
 
    float_t residual = distance(messages[mid].logMu, messages[mid].lookAhead);
@@ -171,10 +161,17 @@ void reprioritize_task(uint ts, uint mid, uint delta_logMu_0, uint delta_logMu_1
    if (residual > sensitivity) {
       update_ts = timestamp(residual);
 
-      enq_task_arg2(UPDATE_MESSAGE_TASK, update_ts, mid, 
+      if (update_ts > ts) {
+         enq_task_arg2(UPDATE_MESSAGE_TASK, update_ts, mid, 
                   *((uint *) &(messages[mid].lookAhead[0])), 
                   *((uint *) &(messages[mid].lookAhead[1]))
                   );
+      } else {
+         enq_task_arg2(UPDATE_MESSAGE_TASK, ts + 1, mid, 
+                  *((uint *) &(messages[mid].lookAhead[0])), 
+                  *((uint *) &(messages[mid].lookAhead[1]))
+                  );
+      }
    }
 }
 
@@ -184,20 +181,18 @@ int main() {
    data = 0;
 
    // Extract base addresses from input file
-   numV = data[0];
-   numE = data[1];
+   numV = data[1];
+   numE = data[2];
    numM = 2 * numE;
    BASE_EDGE_INDICES = data[3];
    BASE_EDGE_DEST = data[4];
-   BASE_EDGES = data[5];
-   BASE_REVERSE_EDGE_INDICES = data[6];
-   BASE_REVERSE_EDGE_DEST = data[7];
-   BASE_REVERSE_EDGE_ID = data[8];
-   BASE_NODES = data[9];
-   BASE_MESSAGES = data[10];
-   BASE_CONVERGED = data[11];
-   sensitivity = *((float *) (&data[12]));
-   BASE_END = data[12];
+   BASE_REVERSE_EDGE_INDICES = data[5];
+   BASE_REVERSE_EDGE_DEST = data[6];
+   BASE_REVERSE_EDGE_ID = data[7];
+   BASE_MESSAGES = data[8];
+   BASE_CONVERGED = data[9];
+   sensitivity = *((float *) (&data[10]));
+   BASE_END = data[11];
 
    // Dereference the pointers to array base addresses.
    edge_indices = &data[BASE_EDGE_INDICES];
@@ -206,8 +201,6 @@ int main() {
    reverse_edge_dest = &data[BASE_REVERSE_EDGE_DEST];
    reverse_edge_id = &data[BASE_REVERSE_EDGE_ID];
    messages = (message_t *) &data[BASE_MESSAGES];
-   edges = (edge_t *) &data[BASE_EDGES];
-   nodes = (node_t *) &data[BASE_NODES];
    converged_messages = (message_t *) &data[BASE_CONVERGED];
 
    for (uint32_t i = 0; i < numM; i++) {
