@@ -29,22 +29,18 @@ void WriteOutput(FILE* fp) {
 
 	uint32_t SIZE_EDGE_INDICES = (numV + 1 + 15)/16 * 16;
     uint32_t SIZE_EDGE_DEST = (numE + 15)/16 * 16;
-    uint32_t SIZE_EDGES = (numE * 4 + 15)/16 * 16;
     uint32_t SIZE_REVERSE_EDGE_INDICES = (numV + 1 + 15)/16 * 16;
     uint32_t SIZE_REVERSE_EDGE_DEST = (numE + 15)/16 * 16;
     uint32_t SIZE_REVERSE_EDGE_ID = (numE + 15)/16 * 16;
-    uint32_t SIZE_NODES = (numV * 2 + 15)/16 * 16;
-    uint32_t SIZE_MESSAGES = (2 * numE * 6 + 15)/16 * 16;
-    uint32_t SIZE_CONVERGED = (2 * numE * 6 + 15)/16 * 16;
+    uint32_t SIZE_MESSAGES = (2 * numE * 8 + 15)/16 * 16;
+    uint32_t SIZE_CONVERGED = (2 * numE * 8 + 15)/16 * 16;
 
     uint32_t BASE_EDGE_INDICES = 16;
     uint32_t BASE_EDGE_DEST = BASE_EDGE_INDICES + SIZE_EDGE_INDICES;
-    uint32_t BASE_EDGES = BASE_EDGE_DEST + SIZE_EDGE_DEST;
-    uint32_t BASE_REVERSE_EDGE_INDICES = BASE_EDGES + SIZE_EDGES;
+    uint32_t BASE_REVERSE_EDGE_INDICES = BASE_EDGE_DEST + SIZE_EDGE_DEST;
     uint32_t BASE_REVERSE_EDGE_DEST = BASE_REVERSE_EDGE_INDICES + SIZE_REVERSE_EDGE_INDICES;
     uint32_t BASE_REVERSE_EDGE_ID = BASE_REVERSE_EDGE_DEST + SIZE_REVERSE_EDGE_DEST;
-    uint32_t BASE_NODES = BASE_REVERSE_EDGE_ID + SIZE_REVERSE_EDGE_ID;
-    uint32_t BASE_MESSAGES = BASE_NODES + SIZE_NODES;
+    uint32_t BASE_MESSAGES = BASE_REVERSE_EDGE_ID + SIZE_REVERSE_EDGE_ID;
     uint32_t BASE_CONVERGED = BASE_MESSAGES + SIZE_MESSAGES;
 
 	uint32_t BASE_END = BASE_CONVERGED + SIZE_CONVERGED;
@@ -56,73 +52,64 @@ void WriteOutput(FILE* fp) {
 	data[2] = numE;
 	data[3] = BASE_EDGE_INDICES;
 	data[4] = BASE_EDGE_DEST;
-	data[5] = BASE_EDGES;
-	data[6] = BASE_REVERSE_EDGE_INDICES;
-	data[7] = BASE_REVERSE_EDGE_DEST;
-	data[8] = BASE_REVERSE_EDGE_ID;
-	data[9] = BASE_NODES;
-	data[10] = BASE_MESSAGES;
-    data[11] = BASE_CONVERGED;
-	data[12] = *((uint32_t *) &sensitivity);
-	data[13] = BASE_END;
+	data[5] = BASE_REVERSE_EDGE_INDICES;
+	data[6] = BASE_REVERSE_EDGE_DEST;
+	data[7] = BASE_REVERSE_EDGE_ID;
+	data[8] = BASE_MESSAGES;
+    data[9] = BASE_CONVERGED;
+	data[10] = *((uint32_t *) &sensitivity);
+	data[11] = BASE_END;
 
     printf("header %d: 0x%4x\n", 0, data[0]);
-	for (uint32_t i = 1; i < 12; i++) {
+	for (uint32_t i = 1; i < 10; i++) {
 		printf("header %d: %d\n", i, data[i]);
 	}
-    printf("header %d: %f\n", 12, *((float_t *) &data[12]));
-    printf("header %d: %d\n", 13, data[13]);
+    printf("header %d: %f\n", 10, *((float_t *) &data[10]));
+    printf("header %d: %d\n", 11, data[11]);
 
-    for (uint32_t i = 0; i < SIZE_EDGE_INDICES; i++) {
+    for (uint32_t i = 0; i < numV + 1; i++) {
         data[BASE_EDGE_INDICES + i] = mrf->edge_indices[i];
     }
 
-    for (uint32_t i = 0; i < SIZE_EDGE_DEST; i++) {
+    for (uint32_t i = 0; i < numE; i++) {
         data[BASE_EDGE_DEST + i] = mrf->edge_dest[i];
         // printf("%8x\n", data[BASE_EDGE_DEST + i]);
         // printf("%8x\n\n", (BASE_EDGE_DEST + i)*8);
     }
 
-    for (uint32_t i = 0; i < SIZE_EDGES; i+=4) {
-        data[BASE_EDGES + i] = *(uint32_t *) &((mrf->edges[i/4]).logPotentials[0][0]);
-        data[BASE_EDGES + i + 1] = *(uint32_t *) &((mrf->edges[i/4]).logPotentials[0][1]);
-        data[BASE_EDGES + i + 2] = *(uint32_t *) &((mrf->edges[i/4]).logPotentials[1][0]);
-        data[BASE_EDGES + i + 3] = *(uint32_t *) &((mrf->edges[i/4]).logPotentials[1][1]);
-    }
-
-    for (uint32_t i = 0; i < SIZE_REVERSE_EDGE_INDICES; i++) {
+    for (uint32_t i = 0; i < numV + 1; i++) {
         data[BASE_REVERSE_EDGE_INDICES + i] = mrf->reverse_edge_indices[i];
+        assert((BASE_REVERSE_EDGE_INDICES + i) < BASE_END);
     }
 
-    for (uint32_t i = 0; i < SIZE_REVERSE_EDGE_DEST; i++) {
+    for (uint32_t i = 0; i < numE; i++) {
         data[BASE_REVERSE_EDGE_DEST + i] = mrf->reverse_edge_dest[i];
+        assert((BASE_REVERSE_EDGE_DEST + i) < BASE_END);
     }
 
-    for (uint32_t i = 0; i < SIZE_REVERSE_EDGE_ID; i++) {
-        data[BASE_REVERSE_EDGE_ID + i] = mrf->reverse_edge_indices[i];
+    for (uint32_t i = 0; i < numE; i++) {
+        data[BASE_REVERSE_EDGE_ID + i] = mrf->reverse_edge_id[i];
+        assert((BASE_REVERSE_EDGE_ID + i) < BASE_END);
     }
 
-    for (uint32_t i = 0; i < SIZE_NODES; i+=2) {
-        data[BASE_NODES + i] = *(uint32_t *) &((mrf->nodes[i/2]).logNodePotentials[0]);
-        data[BASE_NODES + i + 1] = *(uint32_t *) &((mrf->nodes[i/2]).logNodePotentials[0]);
+    for (uint32_t i = 0; i < 2 * numE * 8; i+=8) {
+        data[BASE_MESSAGES + i]  = (mrf->messages[i/8]).i;
+        data[BASE_MESSAGES + i + 1]  = (mrf->messages[i/8]).j;
+        data[BASE_MESSAGES + i + 2]  = *(uint32_t *) &((mrf->messages[i/8]).logMu[0]);
+        data[BASE_MESSAGES + i + 3]  = *(uint32_t *) &((mrf->messages[i/8]).logMu[1]);
+        data[BASE_MESSAGES + i + 4]  = *(uint32_t *) &((mrf->messages[i/8]).lookAhead[0]);
+        data[BASE_MESSAGES + i + 5]  = *(uint32_t *) &((mrf->messages[i/8]).lookAhead[1]);
+        assert((BASE_MESSAGES + i + 7) < BASE_END);
     }
 
-    for (uint32_t i = 0; i < SIZE_MESSAGES; i+=6) {
-        data[BASE_MESSAGES + i]  = (mrf->messages[i/6]).i;
-        data[BASE_MESSAGES + i + 1]  = (mrf->messages[i/6]).j;
-        data[BASE_MESSAGES + i + 2]  = *(uint32_t *) &((mrf->messages[i/6]).logMu[0]);
-        data[BASE_MESSAGES + i + 3]  = *(uint32_t *) &((mrf->messages[i/6]).logMu[1]);
-        data[BASE_MESSAGES + i + 4]  = *(uint32_t *) &((mrf->messages[i/6]).lookAhead[0]);
-        data[BASE_MESSAGES + i + 5]  = *(uint32_t *) &((mrf->messages[i/6]).lookAhead[1]);
-    }
-
-    for (uint32_t i = 0; i < SIZE_CONVERGED; i+=6) {
-        data[BASE_CONVERGED + i]  = (mrf_sol->messages[i/6]).i;
-        data[BASE_CONVERGED + i + 1]  = (mrf_sol->messages[i/6]).j;
-        data[BASE_CONVERGED + i + 2]  = *(uint32_t *) &((mrf_sol->messages[i/6]).logMu[0]);
-        data[BASE_CONVERGED + i + 3]  = *(uint32_t *) &((mrf_sol->messages[i/6]).logMu[1]);
-        data[BASE_CONVERGED + i + 4]  = *(uint32_t *) &((mrf_sol->messages[i/6]).lookAhead[0]);
-        data[BASE_CONVERGED + i + 5]  = *(uint32_t *) &((mrf_sol->messages[i/6]).lookAhead[1]);
+    for (uint32_t i = 0; i < 2 * numE * 8; i+=8) {
+        data[BASE_CONVERGED + i]  = (mrf_sol->messages[i/8]).i;
+        data[BASE_CONVERGED + i + 1]  = (mrf_sol->messages[i/8]).j;
+        data[BASE_CONVERGED + i + 2]  = *(uint32_t *) &((mrf_sol->messages[i/8]).logMu[0]);
+        data[BASE_CONVERGED + i + 3]  = *(uint32_t *) &((mrf_sol->messages[i/8]).logMu[1]);
+        data[BASE_CONVERGED + i + 4]  = *(uint32_t *) &((mrf_sol->messages[i/8]).lookAhead[0]);
+        data[BASE_CONVERGED + i + 5]  = *(uint32_t *) &((mrf_sol->messages[i/8]).lookAhead[1]);
+        assert((BASE_CONVERGED + i + 7) < BASE_END);
     }
 
 	printf("Writing file \n");
@@ -172,9 +159,48 @@ int main(int argc, const char** argv) {
     numV = mrf->num_nodes;
     numE = mrf->num_edges;
 
+    printf("num_edges = %d\n", numE);
+
+    printf("edge_indices: ");
+    for (uint32_t i = 0; i < numV + 1; i++) {
+        printf("%d ", mrf->edge_indices[i]);
+    }
+    printf("\n");
+
+    printf("edge_dest: ");
+    for (uint32_t i = 0; i < numE; i++) {
+        printf("%d ", mrf->edge_dest[i]);
+    }
+    printf("\n");
+
+    printf("reverse_edge_indices: ");
+    for (uint32_t i = 0; i < numV + 1; i++) {
+        printf("%d ", mrf->reverse_edge_indices[i]);
+    }
+    printf("\n");
+
+    printf("reverese_edge_dest: ");
+    for (uint32_t i = 0; i < numE; i++) {
+        printf("%d ", mrf->reverse_edge_dest[i]);
+    }
+    printf("\n");
+
+    printf("reverese_edge_id: ");
+    for (uint32_t i = 0; i < numE; i++) {
+        printf("%d ", mrf->reverse_edge_id[i]);
+    }
+    printf("\n");
+
+
+
     assert(mrf);
     assert(mrf_sol);
     std::cout << "The " << mrfName << " model has been set up" << std::endl;
+
+    // Initialize lookaheads
+    for (uint32_t i = 0; i < 2 * numE; i++) {
+        (mrf->messages[i]).lookAhead = mrf->getFutureMessageVal(i);
+    }
 
     Results res;
 
@@ -254,8 +280,8 @@ int main(int argc, const char** argv) {
               << res[0][1]
               << std::endl;
 
-    delete mrf;
-    delete mrf_sol;
+    // delete mrf;
+    // delete mrf_sol;
 
     return 0;
 }

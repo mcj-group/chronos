@@ -10,7 +10,7 @@ MRF_CSR* examples_mrf_CSR::isingMRF(
     std::default_random_engine e(seed);
     std::uniform_real_distribution<float_t> randomHalfCSpread(-0.5 * C, 0.5 * C);
 
-    MRF_CSR* mrf = new MRF_CSR(n * m, 2 * n * m);
+    MRF_CSR* mrf = new MRF_CSR(n * m, 2 * n * m - m - n);
 
     for (uint32_t i = 0; i < n * m; i++) {
         std::array<float_t,2> potential;
@@ -42,11 +42,13 @@ MRF_CSR* examples_mrf_CSR::isingMRF(
                         }
                     }
                     mrf->addEdge(i, j, potential);
+                    printf("adding edge (%d, %d)\n", i, j);
                 }
             }
         }
     }
     mrf->endAddEdge();
+    printf("\n");
     return mrf;
 }
 
@@ -55,7 +57,7 @@ MRF_CSR* examples_mrf_CSR::pottsMRF(
     std::default_random_engine e(seed);
     std::uniform_real_distribution<float_t> randomHalfCSpread(-0.5 * C, 0.5 * C);
 
-    MRF_CSR* mrf = new MRF_CSR(n * n, 2 * n * n);
+    MRF_CSR* mrf = new MRF_CSR(n * n, 2 * n * n - n - n);
 
     for (uint32_t i = 0; i < n * n; i++) {
         std::array<float_t,2> potential;
@@ -83,18 +85,20 @@ MRF_CSR* examples_mrf_CSR::pottsMRF(
                         }
                     }
                     mrf->addEdge(i, j, potential);
+                    printf("adding edge (%d, %d)\n", i, j);
                 }
             }
         }
     }
     mrf->endAddEdge();
+    printf("\n");
     return mrf;
 }
 
 MRF_CSR* examples_mrf_CSR::randomTree(uint32_t n, uint32_t C, uint32_t seed){
     std::default_random_engine e(seed);
     std::uniform_real_distribution<float_t> randomZeroToC(0.0, C);
-    MRF_CSR* mrf = new MRF_CSR(n, 2 * n);
+    MRF_CSR* mrf = new MRF_CSR(n, n - 1);
 
     for (uint32_t i = 0; i  < n; i++){
         std::array<float_t, 2> potential;
@@ -114,13 +118,15 @@ MRF_CSR* examples_mrf_CSR::randomTree(uint32_t n, uint32_t C, uint32_t seed){
             }
         }
         mrf->addEdge(i, p, potential);
+        printf("adding edge (%d, %d)\n", i, p);
     }
     mrf->endAddEdge();
+    printf("\n");
     return mrf;
 }
 
 MRF_CSR* examples_mrf_CSR::deterministicTree(uint32_t n){
-    MRF_CSR* mrf = new MRF_CSR(n, 2 * n);
+    MRF_CSR* mrf = new MRF_CSR(n, n - 1);
     mrf->setNodePotential(0, {0.1, 0.9});
     for (uint32_t i = 1; i < n; i++){
         mrf->setNodePotential(i, {0.5, 0.5});
@@ -134,7 +140,9 @@ MRF_CSR* examples_mrf_CSR::deterministicTree(uint32_t n){
 
     for (uint32_t i = 2; i <=n; i++){
         mrf->addEdge(i - 1, i / 2 - 1, tmp);
+        printf("adding edge (%d, %d)\n", i - 1, i / 2 - 1);
     }
     mrf->endAddEdge();
+    printf("\n");
     return mrf;
 }

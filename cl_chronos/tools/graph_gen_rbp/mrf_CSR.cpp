@@ -38,14 +38,14 @@ MRF_CSR::~MRF_CSR()
 {
     //free memory
     delete [] nodes;
-    // free(edge_indices);
-    // free(edge_dest);
+    free(edge_indices);
+    free(edge_dest);
     delete [] edges;
     delete [] messages;
 
-    // free(reverse_edge_indices);
-    // free(reverse_edge_dest);
-    // free(reverse_edge_id);
+    free(reverse_edge_indices);
+    free(reverse_edge_dest);
+    free(reverse_edge_id);
 
     // <TODO> (leo): figure out delete/free errors (replicate with "residual ising 2")
 }
