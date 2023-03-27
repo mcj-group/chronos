@@ -37,6 +37,7 @@ module VexRiscv (
   input               iBus_rsp_payload_error,
   input               clk,
   input               reset,
+  output     [31:0]   debug_pc,
   input               debugReset
 );
   localparam ShiftCtrlEnum_DISABLE_1 = 2'd0;
@@ -1739,6 +1740,7 @@ module VexRiscv (
   assign _zz_execute_BranchPlugin_branch_src2_6 = execute_INSTRUCTION[31];
   assign _zz_execute_BranchPlugin_branch_src2_7 = execute_INSTRUCTION[31];
   assign _zz_execute_BranchPlugin_branch_src2_8 = execute_INSTRUCTION[7];
+  assign debug_pc = IBusCachedPlugin_fetchPc_pcReg; // [maleen]
   initial begin
     $readmemb("VexRiscv.v_toplevel_RegFilePlugin_regFile.bin",RegFilePlugin_regFile);
   end

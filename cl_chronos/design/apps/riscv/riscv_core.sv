@@ -351,7 +351,7 @@ always_comb begin
       end
       IO_READ: begin
          `ifdef DEBUG
-         $display ("io_read_addr = %h", io_read_addr);
+         $display ("[PC: %h] io_read_addr = %h", debug_pc, io_read_addr);
          `endif
          if (io_read_addr == RISCV_DEQ_TASK & abort_running_task_q) begin
             if (finish_task_valid & finish_task_ready) begin
@@ -392,25 +392,26 @@ end
 always_ff @(posedge clk) begin
    if (state == NEXT_TASK) begin
       if (task_arvalid & task_rvalid) begin
-         $display("[%5d][tile-%2d][core-%2d] dequeue_task: ts:%5x  object:%5x ttype:%2d args:(%4d, %4d) slot:%3d",
-            cycle, TILE_ID, CORE_ID, task_rdata.ts, task_rdata.object, task_rdata.ttype,
+         $display("[cycle-%5d][tile-%2d][core-%2d][PC-%h] dequeue_task: ts:%5x  object:%5x ttype:%2d args:(%4d, %4d) slot:%3d",
+            cycle, TILE_ID, CORE_ID, debug_pc, task_rdata.ts, task_rdata.object, task_rdata.ttype,
             task_rdata.args[63:32], task_rdata.args[31:0], task_rslot);
       end
    end
 
    if (task_wvalid & task_wready) begin
-         $display("[%5d][tile-%2d][core-%2d] \tenqueue_task: ts:%5x  object:%5x ttype:%2d args:(%4d, %4d)",
-            cycle, TILE_ID, CORE_ID, task_wdata.ts, task_wdata.object, task_wdata.ttype,
+         $display("[cycle-%5d][tile-%2d][core-%2d][PC-%h] \tenqueue_task: ts:%5x  object:%5x ttype:%2d args:(%4d, %4d)",
+            cycle, TILE_ID, CORE_ID, debug_pc, task_wdata.ts, task_wdata.object, task_wdata.ttype,
             task_wdata.args[63:32], task_wdata.args[31:0]);
    end
    abort_running_task_d <= abort_running_task;
    if (abort_running_task & !abort_running_task_d) begin
-         $display("[%5d][tile-%2d][core-%2d] \tabort running task", 
-            cycle, TILE_ID, CORE_ID);
+         $display("[cycle-%5d][tile-%2d][core-%2d][PC-%h] \tabort running task", 
+            cycle, TILE_ID, CORE_ID, debug_pc);
    end
 end
 always @(state) begin
-   $display ("[%5d][tile-%2d][core-%2d][state-%d][io_read_addr-%h]", cycle, TILE_ID, CORE_ID, state, io_read_addr);
+   $display ("[cycle-%5d][tile-%2d][core-%2d][PC-%h][state-%d][io_read_addr-%h]", 
+         cycle, TILE_ID, CORE_ID, debug_pc, state, io_read_addr);
 end
 
 `endif
@@ -746,8 +747,8 @@ end
       .dBus_rsp_payload_last     (1'b1),
       .dBus_rsp_payload_error    (1'b0),
       .clk                       (clk),
-      .reset                     (rst_core)
-      //.debug_pc                  (debug_pc)
+      .reset                     (rst_core),
+      .debug_pc                  (debug_pc)
    );
 
    axi_decoder #(

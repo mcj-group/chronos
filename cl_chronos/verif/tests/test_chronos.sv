@@ -82,10 +82,10 @@ initial begin
    
    case (APP_NAME) 
       "des"     : input_file = "input_net";
-      "sssp"    : input_file = "input_graph";
-      "sssp_fs"    : input_file = "input_graph";
-      "sssp_hls": input_file = "input_graph";
-      "residual_bp" : input_file = "input_graph";
+      "sssp"    : input_file = "input_graph.sssp";
+      "sssp_fs"    : input_file = "input_graph.sssp_fs";
+      "sssp_hls": input_file = "input_graph.sssp_hls";
+      "residual_bp" : input_file = "input_graph.rbp";
       "astar"   : input_file = "input_astar";
       "color"   : input_file = "input_color";
       "maxflow" : input_file = "input_maxflow";
@@ -141,6 +141,9 @@ initial begin
    end
    if (APP_NAME == "silo") begin
       task_enq(0, 0, 0, 0, 0, 0);
+   end      
+   if (APP_NAME == "residual_bp") begin
+      task_enq(0, 1000, 0, 0, 0, 0);
    end      
     
    //ocl_poke(N_TILES, ID_GLOBAL, MEM_XBAR_RATE_CTRL, {16'h1, 16'd64});
