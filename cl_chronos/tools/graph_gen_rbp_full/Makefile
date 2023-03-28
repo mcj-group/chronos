@@ -20,9 +20,9 @@ CFLAGS = -std=c++11 -O3 -Wall -g
 
 LDLIBS = -lrt -lpthread
 
-SRC = graph_gen_rbp.cpp examples_mrf_CSR.cpp edge_CSR.cpp mrf_CSR.cpp residual_bp_CSR.cpp
+SRC = graph_gen_rbp_full.cpp examples_mrf_CSR.cpp edge_CSR.cpp mrf_CSR.cpp residual_bp_CSR.cpp
 OBJ = $(SRC:.c=.o)
-BIN = graph_gen_rbp examples_mrf_CSR edge_CSR mrf_CSR residual_bp_CSR
+BIN = graph_gen_rbp_full examples_mrf_CSR edge_CSR mrf_CSR residual_bp_CSR
 
 all: $(BIN) 
 
