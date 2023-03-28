@@ -48,7 +48,7 @@ const int ADDR_BASE_END = 11 << 2;
 // CSR format of RBP graph
 uint32_t numV;
 uint32_t numE;
-float32_t sensitivity;
+float_t sensitivity;
 
 uint32_t *edge_indices;
 uint32_t *edge_dest;
@@ -105,14 +105,8 @@ void create_graph_from_file() {
    read_cnt += 7;
 
    // Print the base addresses.
-   printf("edge_indices_base: %d,\n
-         edge_dest_base: %d,\n
-         reverse_edge_indices_base: %d,\n
-         reverse_edge_dest_base: %d,\n
-         reverse_edge_id_base: %d,\n
-         messages_base: %d,\n
-         converged_base: %d\n", 
-         edge_indices_base, %p
+   printf("edge_indices_base: %d, edge_dest_base: %d, reverse_edge_indices_base: %d, reverse_edge_dest_base: %d, reverse_edge_id_base: %d, messages_base: %d, converged_base: %d\n", 
+         edge_indices_base,
          edge_dest_base, 
          reverse_edge_indices_base, 
          reverse_edge_dest_base, 
@@ -121,11 +115,11 @@ void create_graph_from_file() {
          converged_base);
 
    // Read sensitivity.
-   fread(&sensitivity, sizeof(float32_t), 1, fp);
+   fread(&sensitivity, sizeof(float_t), 1, fp);
    read_cnt += 1;
 
    // Print the sensitivity.
-   printf("sensitivity: %hf\n", sensitivity);
+   printf("sensitivity: %f\n", sensitivity);
 
    // Allocate memory for the graph.
    edge_indices = (uint32_t *) calloc(numV + 1, sizeof(uint32_t));
@@ -205,10 +199,10 @@ void create_graph_from_file() {
    for (uint32_t i = 0; i < numE * 2; i++) {
       fread(&(messages[i].i), sizeof(uint32_t), 1, fp);
       fread(&(messages[i].j), sizeof(uint32_t), 1, fp);
-      fread(&(messages[i].logMu[0]), sizeof(float32_t), 1, fp);
-      fread(&(messages[i].logMu[1]), sizeof(float32_t), 1, fp);
-      fread(&(messages[i].lookAhead[0]), sizeof(float32_t), 1, fp);
-      fread(&(messages[i].lookAhead[1]), sizeof(float32_t), 1, fp);
+      fread(&(messages[i].logMu[0]), sizeof(float_t), 1, fp);
+      fread(&(messages[i].logMu[1]), sizeof(float_t), 1, fp);
+      fread(&(messages[i].lookAhead[0]), sizeof(float_t), 1, fp);
+      fread(&(messages[i].lookAhead[1]), sizeof(float_t), 1, fp);
       fread(&(messages[i].logsIn[0][0]), sizeof(uint32_t), 1, fp);
       fread(&(messages[i].logsIn[0][1]), sizeof(uint32_t), 1, fp);
       fread(&(messages[i].logsIn[1][0]), sizeof(uint32_t), 1, fp);
@@ -225,10 +219,10 @@ void create_graph_from_file() {
    for (uint32_t i = 0; i < numE * 2; i++) {
       fread(&(converged_messages[i].i), sizeof(uint32_t), 1, fp);
       fread(&(converged_messages[i].j), sizeof(uint32_t), 1, fp);
-      fread(&(converged_messages[i].logMu[0]), sizeof(float32_t), 1, fp);
-      fread(&(converged_messages[i].logMu[1]), sizeof(float32_t), 1, fp);
-      fread(&(converged_messages[i].lookAhead[0]), sizeof(float32_t), 1, fp);
-      fread(&(converged_messages[i].lookAhead[1]), sizeof(float32_t), 1, fp);
+      fread(&(converged_messages[i].logMu[0]), sizeof(float_t), 1, fp);
+      fread(&(converged_messages[i].logMu[1]), sizeof(float_t), 1, fp);
+      fread(&(converged_messages[i].lookAhead[0]), sizeof(float_t), 1, fp);
+      fread(&(converged_messages[i].lookAhead[1]), sizeof(float_t), 1, fp);
       fread(&(converged_messages[i].logsIn[0][0]), sizeof(uint32_t), 1, fp);
       fread(&(converged_messages[i].logsIn[0][1]), sizeof(uint32_t), 1, fp);
       fread(&(converged_messages[i].logsIn[1][0]), sizeof(uint32_t), 1, fp);
@@ -276,27 +270,15 @@ void print_graph() {
    }
    printf("\n");
 
-   // Print the nodes.
-   for (uint32_t i = 0; i < numV; i++) {
-      printf("Node %d: (%hf, %hf)\n", i, nodes[i].potential[0], nodes[i].potential[1]);
-   }
-   printf("\n");
-
-   // Print the edges.
-   for (uint32_t i = 0; i < numE; i++) {
-      printf("Edge %d: (%hf, %hf)\n", i, edges[i].potential[0], edges[i].potential[1]);
-   }
-   printf("\n");
-
    // Print the messages.
    for (uint32_t i = 0; i < 2 * numE; i++) {
-      printf("Message %d: (%d, %d) = (%hf, %hf)\n", i, messages[i].i, messages[i].j, messages[i].logMu[0], messages[i].logMu[1]);
+      printf("Message %d: (%d, %d) = (%f, %f)\n", i, messages[i].i, messages[i].j, messages[i].logMu[0], messages[i].logMu[1]);
    }
    printf("\n");
 
    // Print the converged messages.
    for (uint32_t i = 0; i < 2 * numE; i++) {
-      printf("Converged Message %d: (%d, %d) = (%hf, %hf)\n", i, converged_messages[i].i, converged_messages[i].j, converged_messages[i].logMu[0], converged_messages[i].logMu[1]);
+      printf("Converged Message %d: (%d, %d) = (%f, %f)\n", i, converged_messages[i].i, converged_messages[i].j, converged_messages[i].logMu[0], converged_messages[i].logMu[1]);
    }
    printf("\n");
 }
@@ -311,7 +293,7 @@ void init_task(uint ts) {
 
 void enqueue_update_task(uint ts, uint mid) {
    printf("\nEnqueue update task: mid-%d\n", mid);
-   float32_t residual = distance(messages[mid].logMu, messages[mid].lookAhead);
+   float_t residual = distance(messages[mid].logMu, messages[mid].lookAhead);
 
    if (residual > sensitivity) {
       uint update_ts = timestamp(residual);
@@ -327,9 +309,9 @@ void enqueue_update_task(uint ts, uint mid) {
 void update_message_task(uint ts, uint mid,  uint enqueued_lookAhead_0, uint enqueued_lookAhead_1) {
    printf("\nUpdate message task: mid-%d\n", mid);
    // check if enqueued version is the latest
-   float32_t enqueued_lookAhead[2];
-   enqueued_lookAhead[0] = *((float32_t *) &enqueued_lookAhead_0);
-   enqueued_lookAhead[1] = *((float32_t *) &enqueued_lookAhead_1);
+   float_t enqueued_lookAhead[2];
+   enqueued_lookAhead[0] = *((float_t *) &enqueued_lookAhead_0);
+   enqueued_lookAhead[1] = *((float_t *) &enqueued_lookAhead_1);
    if ((messages[mid].lookAhead[0] != enqueued_lookAhead[0]) || (messages[mid].lookAhead[1] != enqueued_lookAhead[1])) {
       // not most up-to-date copy of update task
       printf("aborted, not most up-to-date copy\n");
@@ -337,7 +319,7 @@ void update_message_task(uint ts, uint mid,  uint enqueued_lookAhead_0, uint enq
    }
 
    // update logMu
-   float32_t old_logMu[2];
+   float_t old_logMu[2];
 
    old_logMu[0] = messages[mid].logMu[0];
    messages[mid].logMu[0] = enqueued_lookAhead[0];
@@ -346,15 +328,15 @@ void update_message_task(uint ts, uint mid,  uint enqueued_lookAhead_0, uint enq
    old_logMu[1] = messages[mid].logMu[1];
    messages[mid].logMu[1] = enqueued_lookAhead[1];
    undo_log_write((uint *) &(messages[mid].logMu[1]), *((uint *) (&old_logMu[1])));
-   printf("old logMu: (%hf, %hf)\n", old_logMu[0], old_logMu[1]);
-   printf("new logMu: (%hf, %hf)\n", messages[mid].logMu[0], messages[mid].logMu[1]);
+   printf("old logMu: (%f, %f)\n", old_logMu[0], old_logMu[1]);
+   printf("new logMu: (%f, %f)\n", messages[mid].logMu[0], messages[mid].logMu[1]);
 
    // calculate change in logMu for propagation
-   float32_t delta_logMu[2];
+   float_t delta_logMu[2];
    delta_logMu[0] = messages[mid].logMu[0] - old_logMu[0];
    delta_logMu[1] = messages[mid].logMu[1] - old_logMu[1];
 
-   printf("delta logMu: (%hf, %hf)\n", delta_logMu[0], delta_logMu[1]);
+   printf("delta logMu: (%f, %f)\n", delta_logMu[0], delta_logMu[1]);
 
    // propagate 
    printf("propagate\n");
@@ -389,12 +371,15 @@ void update_message_task(uint ts, uint mid,  uint enqueued_lookAhead_0, uint enq
 }
 
 void reprioritize_task(uint ts, uint mid, uint delta_logMu_0, uint delta_logMu_1) {
-   printf("\nReprioritize task: mid-%d, deltaLogMu: (%hf, %hf)\n", mid, *((float32_t *) &delta_logMu_0), *((float32_t *) &delta_logMu_1));
-   float32_t delta_logMu[2];
+   printf("\nReprioritize task: mid-%d, deltaLogMu: (%f, %f)\n", mid, *((float_t *) &delta_logMu_0), *((float_t *) &delta_logMu_1));
+   float_t delta_logMu[2];
 
    // put delta_logMu into array
-   delta_logMu[0] = *((float32_t *) &delta_logMu_0);
-   delta_logMu[1] = *((float32_t *) &delta_logMu_1);
+   delta_logMu[0] = *((float_t *) &delta_logMu_0);
+   delta_logMu[1] = *((float_t *) &delta_logMu_1);
+
+   // print delta_logMu
+   printf("delta logMu: (%f, %f)\n", delta_logMu[0], delta_logMu[1]);
 
    uint update_ts;
 
@@ -405,36 +390,39 @@ void reprioritize_task(uint ts, uint mid, uint delta_logMu_0, uint delta_logMu_1
    undo_log_write((uint *) &(messages[mid].logsIn[1][1]), *((uint *) &(messages[mid].logsIn[1][1])));
 
    // update logsIn
-   float32_t result[2];
+   float_t result[2];
    messages[mid].logsIn[0][0] += delta_logMu[0];
    messages[mid].logsIn[0][1] += delta_logMu[1];   
    messages[mid].logsIn[1][0] += delta_logMu[0];
    messages[mid].logsIn[1][1] += delta_logMu[1];
 
    // calculate new lookAhead
-   result[0] = logSum(logsIn[0][0], logsIn[0][1]);
-   result[1] = logSum(logsIn[1][0], logsIn[1][1]);
+   result[0] = logSum(messages[mid].logsIn[0][0], messages[mid].logsIn[0][1]);
+   result[1] = logSum(messages[mid].logsIn[1][0], messages[mid].logsIn[1][1]);
 
-   float32_t logTotalSum = logSum(result[0], result[1]);
+   float_t logTotalSum = logSum(result[0], result[1]);
 
    // normalization
    result[0] -= logTotalSum;
    result[1] -= logTotalSum;
 
+   // print result  
+   printf("result: (%f, %f)\n", result[0], result[1]);
+
    // save old lookAhead
    undo_log_write((uint *) &(messages[mid].lookAhead[0]), *((uint *) &(messages[mid].lookAhead[0])));
    undo_log_write((uint *) &(messages[mid].lookAhead[1]), *((uint *) &(messages[mid].lookAhead[1])));
 
-   printf("old lookAhead: (%hf, %hf)\n", messages[mid].lookAhead[0], messages[mid].lookAhead[1]);
+   printf("old lookAhead: (%f, %f)\n", messages[mid].lookAhead[0], messages[mid].lookAhead[1]);
 
    // update lookAhead
    messages[mid].lookAhead[0] = result[0];
    messages[mid].lookAhead[1] = result[1];
 
-   printf("new lookAhead: (%hf, %hf)\n", messages[mid].lookAhead[0], messages[mid].lookAhead[1]);
+   printf("new lookAhead: (%f, %f)\n", messages[mid].lookAhead[0], messages[mid].lookAhead[1]);
 
-   float32_t residual = distance(messages[mid].logMu, messages[mid].lookAhead);
-   printf("residual: %hf\n", residual);
+   float_t residual = distance(messages[mid].logMu, messages[mid].lookAhead);
+   printf("residual: %f\n", residual);
 
    if (residual > sensitivity) {
       update_ts = timestamp(residual);

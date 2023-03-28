@@ -18,7 +18,7 @@
 INCLUDES = -I$(SDK_DIR)/userspace/include 
 
 CC = g++ -std=c++11
-CFLAGS = -O0 -g -m32
+CFLAGS = -O0 -g
 
 
 SRC = main.c 
