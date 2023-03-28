@@ -33,8 +33,8 @@ void WriteOutput(FILE* fp) {
     uint32_t SIZE_REVERSE_EDGE_INDICES = (numV + 1 + 15)/16 * 16;
     uint32_t SIZE_REVERSE_EDGE_DEST = (numE + 15)/16 * 16;
     uint32_t SIZE_REVERSE_EDGE_ID = (numE + 15)/16 * 16;
-    uint32_t SIZE_MESSAGES = (2 * numE * 8 + 15)/16 * 16;
-    uint32_t SIZE_CONVERGED = (2 * numE * 8 + 15)/16 * 16;
+    uint32_t SIZE_MESSAGES = (2 * numE * 10 + 15)/16 * 16;
+    uint32_t SIZE_CONVERGED = (2 * numE * 10 + 15)/16 * 16;
 
     uint32_t BASE_EDGE_INDICES = 16;
     uint32_t BASE_EDGE_DEST = BASE_EDGE_INDICES + SIZE_EDGE_INDICES;
@@ -93,24 +93,32 @@ void WriteOutput(FILE* fp) {
         assert((BASE_REVERSE_EDGE_ID + i) < BASE_END);
     }
 
-    for (uint32_t i = 0; i < 2 * numE * 8; i+=8) {
-        data[BASE_MESSAGES + i]  = (mrf->messages[i/8]).i;
-        data[BASE_MESSAGES + i + 1]  = (mrf->messages[i/8]).j;
-        data[BASE_MESSAGES + i + 2]  = *(uint32_t *) &((mrf->messages[i/8]).logMu[0]);
-        data[BASE_MESSAGES + i + 3]  = *(uint32_t *) &((mrf->messages[i/8]).logMu[1]);
-        data[BASE_MESSAGES + i + 4]  = *(uint32_t *) &((mrf->messages[i/8]).lookAhead[0]);
-        data[BASE_MESSAGES + i + 5]  = *(uint32_t *) &((mrf->messages[i/8]).lookAhead[1]);
-        assert((BASE_MESSAGES + i + 7) < BASE_END);
+    for (uint32_t i = 0; i < 2 * numE; i++) {
+        data[BASE_MESSAGES + i * 10]  = (mrf->messages[i]).i;
+        data[BASE_MESSAGES + i * 10 + 1]  = (mrf->messages[i]).j;
+        data[BASE_MESSAGES + i * 10 + 2]  = *(uint32_t *) &((mrf->messages[i]).logMu[0]);
+        data[BASE_MESSAGES + i * 10 + 3]  = *(uint32_t *) &((mrf->messages[i]).logMu[1]);
+        data[BASE_MESSAGES + i * 10 + 4]  = *(uint32_t *) &((mrf->messages[i]).lookAhead[0]);
+        data[BASE_MESSAGES + i * 10 + 5]  = *(uint32_t *) &((mrf->messages[i]).lookAhead[1]);
+        data[BASE_MESSAGES + i * 10 + 6]  = *(uint32_t *) &((mrf->messages[i]).logsIn[0][0]);
+        data[BASE_MESSAGES + i * 10 + 7]  = *(uint32_t *) &((mrf->messages[i]).logsIn[0][1]);
+        data[BASE_MESSAGES + i * 10 + 8]  = *(uint32_t *) &((mrf->messages[i]).logsIn[1][0]);
+        data[BASE_MESSAGES + i * 10 + 9]  = *(uint32_t *) &((mrf->messages[i]).logsIn[1][1]);
+        assert((BASE_MESSAGES + i + 9) < BASE_END);
     }
 
-    for (uint32_t i = 0; i < 2 * numE * 8; i+=8) {
-        data[BASE_CONVERGED + i]  = (mrf_sol->messages[i/8]).i;
-        data[BASE_CONVERGED + i + 1]  = (mrf_sol->messages[i/8]).j;
-        data[BASE_CONVERGED + i + 2]  = *(uint32_t *) &((mrf_sol->messages[i/8]).logMu[0]);
-        data[BASE_CONVERGED + i + 3]  = *(uint32_t *) &((mrf_sol->messages[i/8]).logMu[1]);
-        data[BASE_CONVERGED + i + 4]  = *(uint32_t *) &((mrf_sol->messages[i/8]).lookAhead[0]);
-        data[BASE_CONVERGED + i + 5]  = *(uint32_t *) &((mrf_sol->messages[i/8]).lookAhead[1]);
-        assert((BASE_CONVERGED + i + 7) < BASE_END);
+    for (uint32_t i = 0; i < 2 * numE; i++) {
+        data[BASE_CONVERGED + i * 10]  = (mrf_sol->messages[i]).i;
+        data[BASE_CONVERGED + i * 10 + 1]  = (mrf_sol->messages[i]).j;
+        data[BASE_CONVERGED + i * 10 + 2]  = *(uint32_t *) &((mrf_sol->messages[i]).logMu[0]);
+        data[BASE_CONVERGED + i * 10 + 3]  = *(uint32_t *) &((mrf_sol->messages[i]).logMu[1]);
+        data[BASE_CONVERGED + i * 10 + 4]  = *(uint32_t *) &((mrf_sol->messages[i]).lookAhead[0]);
+        data[BASE_CONVERGED + i * 10 + 5]  = *(uint32_t *) &((mrf_sol->messages[i]).lookAhead[1]);
+        data[BASE_CONVERGED + i * 10 + 6]  = *(uint32_t *) &((mrf_sol->messages[i]).logsIn[0][0]);
+        data[BASE_CONVERGED + i * 10 + 7]  = *(uint32_t *) &((mrf_sol->messages[i]).logsIn[0][1]);
+        data[BASE_CONVERGED + i * 10 + 8]  = *(uint32_t *) &((mrf_sol->messages[i]).logsIn[1][0]);
+        data[BASE_CONVERGED + i * 10 + 9]  = *(uint32_t *) &((mrf_sol->messages[i]).logsIn[1][1]);
+        assert((BASE_CONVERGED + i + 9) < BASE_END);
     }
 
 	printf("Writing file \n");

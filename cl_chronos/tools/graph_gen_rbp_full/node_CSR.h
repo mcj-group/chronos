@@ -1,5 +1,6 @@
 #include <array>
 #include "edge_CSR.h"
+#pragma once
 
 typedef uint32_t node_id;
 
