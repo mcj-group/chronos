@@ -179,18 +179,22 @@ int main(int argc, const char** argv) {
     }
     printf("\n");
 
-    printf("reverese_edge_dest: ");
+    printf("reverse_edge_dest: ");
     for (uint32_t i = 0; i < numE; i++) {
         printf("%d ", mrf->reverse_edge_dest[i]);
     }
     printf("\n");
 
-    printf("reverese_edge_id: ");
+    printf("reverse_edge_id: ");
     for (uint32_t i = 0; i < numE; i++) {
         printf("%d ", mrf->reverse_edge_id[i]);
     }
     printf("\n");
 
+    for (uint32_t i = 0; i < 2 * numE; i++) {
+        printf("Message %d: (%d, %d) = (%f, %f)\n", i, mrf->messages[i].i, mrf->messages[i].j, mrf->messages[i].logMu[0], mrf->messages[i].logMu[1]);
+    }
+    printf("\n");
 
 
     assert(mrf);
@@ -210,6 +214,11 @@ int main(int argc, const char** argv) {
         std::cerr << "Unrecognized algorithm: " << algorithm << std::endl;
         return 1;
     }
+
+    for (uint32_t i = 0; i < 2 * numE; i++) {
+        printf("Converged message %d: (%d, %d) = (%f, %f)\n", i, mrf_sol->messages[i].i, mrf_sol->messages[i].j, mrf_sol->messages[i].logMu[0], mrf_sol->messages[i].logMu[1]);
+    }
+    printf("\n");
 
     std::sprintf(out_file, "%s_%d.rbp", mrfName.c_str(), size);
     FILE* fp;
