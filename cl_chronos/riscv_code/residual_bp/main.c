@@ -21,14 +21,15 @@
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <math.h>
 #include "../include/chronos.h"
 
 #define UINT32_MAX		      (4294967295U)
 
 #define INIT_TASK             0
-#define REPRIORITIZE_TASK     1
-#define UPDATE_MESSAGE_TASK   2
+#define ENQUEUE_UPDATE_TASK   1
+#define REPRIORITIZE_TASK     2
+#define UPDATE_MESSAGE_TASK   3
+#define DUMMY_TASK            4
 
 typedef float float_t;
 
@@ -43,48 +44,68 @@ typedef struct Message {
 
 } message_t;
 
-uint32_t *data;
-
-float_t sensitivity;
-uint32_t numV;
-uint32_t numE;
-uint32_t numM;
-
-uint32_t BASE_EDGE_INDICES;
-uint32_t BASE_EDGE_DEST;
-uint32_t BASE_REVERSE_EDGE_INDICES;
-uint32_t BASE_REVERSE_EDGE_DEST;
-uint32_t BASE_REVERSE_EDGE_ID;
-uint32_t BASE_MESSAGES;
-uint32_t BASE_CONVERGED;
-
-uint32_t BASE_END;
+// The location pointing to the base of each of the arrays
+const int ADDR_BASE_NUMV = 1 << 2;
+const int ADDR_BASE_NUME = 2 << 2;
+const int ADDR_BASE_EDGE_INDICES = 3 << 2;
+const int ADDR_BASE_EDGE_DEST = 4 << 2;
+const int ADDR_BASE_REVERSE_EDGE_INDICES = 5 << 2;
+const int ADDR_BASE_REVERSE_EDGE_DEST = 6 << 2;
+const int ADDR_BASE_REVERSE_EDGE_ID = 7 << 2;
+const int ADDR_BASE_MESSAGES = 8 << 2;
+const int ADDR_BASE_SENSITIVITY = 10 << 2;
 
 // CSR format of RBP graph
+uint32_t numE;
+float_t sensitivity;
+
 uint32_t *edge_indices;
+uint32_t pad;
+uint32_t pad0;
 uint32_t *edge_dest;
 uint32_t *reverse_edge_indices;
 uint32_t *reverse_edge_dest;
 uint32_t *reverse_edge_id;
 message_t *messages;
-message_t *converged_messages;
 
-uint32_t timestamp(float_t dist) {
+extern inline uint32_t timestamp(float_t dist) {
    uint32_t SCALING_FACTOR = 1 << 29;
    float_t scaled = dist * SCALING_FACTOR;
    uint32_t ts = UINT32_MAX - 8 - ((uint32_t) scaled);
    return ts;
 }
 
-float_t distance(float_t *log1, float_t *log2) {
-   float_t ans = 0.0;
-   for (uint32_t i = 0; i < 2; i++) {
-      ans += abs(exp(log1[i]) - exp(log2[i]));
+extern inline float_t absval(float_t a) {
+   if (a < 0) {
+      return -a;
+   } else {
+      return a;
    }
+}
+
+extern inline float_t distance(float_t *log1, float_t *log2) {
+   float_t ans = 0.0;
+   ans += absval(log1[0] - log2[0]);
+   ans += absval(log1[1] - log2[1]);
    return ans;
 }
 
-void init_task(uint ts, uint mid) {
+void init_task(uint ts) {
+   // enq_task_arg0(DUMMY_TASK, 0xffffffff, (uint) numE);
+   // enq_task_arg0(DUMMY_TASK, 0xfffffffe, (uint) edge_indices);
+   // enq_task_arg0(DUMMY_TASK, 0xfffffffe, (uint) edge_dest);
+   // enq_task_arg0(DUMMY_TASK, 0xffffffff, (uint) reverse_edge_indices);
+   // enq_task_arg0(DUMMY_TASK, 0xffffffff, (uint) reverse_edge_dest);
+   // enq_task_arg0(DUMMY_TASK, 0xffffffff, (uint) reverse_edge_id);
+   // enq_task_arg0(DUMMY_TASK, 0xffffffff, (uint) messages);
+   // enq_task_arg0(DUMMY_TASK, 0xffffffff, (uint) sensitivity);
+
+   for (uint32_t i = 0; i < 2 * numE; i++) {
+      enq_task_arg0(ENQUEUE_UPDATE_TASK, ts + i + 1, i);
+   }
+}
+
+void enqueue_update_task(uint ts, uint mid) {
    float_t residual = distance(messages[mid].logMu, messages[mid].lookAhead);
 
    if (residual > sensitivity) {
@@ -96,6 +117,8 @@ void init_task(uint ts, uint mid) {
                   );
    }
 }
+
+
 
 void update_message_task(uint ts, uint mid,  uint enqueued_lookAhead_0, uint enqueued_lookAhead_1) {
    // check if enqueued version is the latest
@@ -129,7 +152,10 @@ void update_message_task(uint ts, uint mid,  uint enqueued_lookAhead_0, uint enq
    uint32_t CSR_end = edge_indices[j + 1];
    uint32_t CSC_position = reverse_edge_indices[j];
    uint32_t CSC_end = reverse_edge_indices[j + 1];
-   
+   // enq_task_arg0(DUMMY_TASK, ts + 1, (uint) edge_indices);
+   // enq_task_arg0(DUMMY_TASK, ts + 1, j);
+   // enq_task_arg0(DUMMY_TASK, ts + 1, CSR_position);
+   // enq_task_arg0(DUMMY_TASK, ts + 1, CSR_end);
    uint32_t affected_mid = 0;
    while ((CSR_position < CSR_end) || (CSC_position < CSC_end)) {
       if (CSR_position < CSR_end) {
@@ -178,36 +204,15 @@ void reprioritize_task(uint ts, uint mid, uint delta_logMu_0, uint delta_logMu_1
 int main() {
    chronos_init();
 
-   data = 0;
-
-   // Extract base addresses from input file
-   numV = data[1];
-   numE = data[2];
-   numM = 2 * numE;
-   BASE_EDGE_INDICES = data[3];
-   BASE_EDGE_DEST = data[4];
-   BASE_REVERSE_EDGE_INDICES = data[5];
-   BASE_REVERSE_EDGE_DEST = data[6];
-   BASE_REVERSE_EDGE_ID = data[7];
-   BASE_MESSAGES = data[8];
-   BASE_CONVERGED = data[9];
-   sensitivity = *((float *) (&data[10]));
-   BASE_END = data[11];
-
    // Dereference the pointers to array base addresses.
-   edge_indices = &data[BASE_EDGE_INDICES];
-   edge_dest = &data[BASE_EDGE_DEST];
-   reverse_edge_indices = &data[BASE_REVERSE_EDGE_INDICES];
-   reverse_edge_dest = &data[BASE_REVERSE_EDGE_DEST];
-   reverse_edge_id = &data[BASE_REVERSE_EDGE_ID];
-   messages = (message_t *) &data[BASE_MESSAGES];
-   converged_messages = (message_t *) &data[BASE_CONVERGED];
-
-   for (uint32_t i = 0; i < numM; i++) {
-      enq_task_arg0(INIT_TASK, 0, i); // initialize task calculates initial lookaheads for each message
-   }
-   // Dereference the pointers to array base addresses.
-   // ( The '<<2' is because graph_gen writes the word number, not the byte)
+   numE = *((uint32_t *) (ADDR_BASE_NUME));
+   edge_indices = (uint32_t *) ((*((uint32_t *) (ADDR_BASE_EDGE_INDICES))) << 2);
+   edge_dest = (uint32_t *) ((*((uint32_t *) (ADDR_BASE_EDGE_DEST))) << 2);
+   reverse_edge_indices = (uint32_t *) ((*((uint32_t *) (ADDR_BASE_REVERSE_EDGE_INDICES))) << 2);
+   reverse_edge_dest = (uint32_t *) ((*((uint32_t *) (ADDR_BASE_REVERSE_EDGE_DEST))) << 2);
+   reverse_edge_id = (uint32_t *) ((*((uint32_t *) (ADDR_BASE_REVERSE_EDGE_ID))) << 2);
+   messages = (message_t *) ((*((uint32_t *) (ADDR_BASE_MESSAGES))) << 2);
+   sensitivity = *((float_t *) (ADDR_BASE_SENSITIVITY));
 
    while (1) {
       uint ttype, ts, object; 
@@ -215,7 +220,10 @@ int main() {
       deq_task_arg2(&ttype, &ts, &object, &arg0, &arg1);
       switch(ttype){
          case INIT_TASK:
-            init_task(ts, object);
+            init_task(ts);
+            break;
+         case ENQUEUE_UPDATE_TASK:
+            enqueue_update_task(ts, object);
             break;
          case REPRIORITIZE_TASK:
             reprioritize_task(ts, object, arg0, arg1);
@@ -230,4 +238,3 @@ int main() {
       finish_task();
    }
 }
-

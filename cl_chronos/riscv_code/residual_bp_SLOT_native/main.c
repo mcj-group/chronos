@@ -22,30 +22,15 @@
  */
 
 #include "../include/simulator.h"
-#include "math.h"
-#include "assert.h"
-#include "stdio.h"
 
-#define UINT32_MAX		      (4294967295U)
+#include "stdio.h"
+#include "utils.h"
 
 #define DONE                  (-1)
 #define INIT_TASK             0
 #define ENQUEUE_UPDATE_TASK   1
 #define REPRIORITIZE_TASK     2
 #define UPDATE_MESSAGE_TASK   3
-
-typedef float float32_t;
-
-typedef struct Message {
-   uint32_t i;
-   uint32_t j;
-
-   float32_t logMu[2];
-   float32_t lookAhead[2];
-
-   uint32_t padding[2]; // padding for cache line alignment
-
-} message_t;
 
 // The location pointing to the base of each of the arrays
 const int ADDR_BASE_NUMV = 1 << 2;
@@ -56,7 +41,9 @@ const int ADDR_BASE_REVERSE_EDGE_INDICES = 5 << 2;
 const int ADDR_BASE_REVERSE_EDGE_DEST = 6 << 2;
 const int ADDR_BASE_REVERSE_EDGE_ID = 7 << 2;
 const int ADDR_BASE_MESSAGES = 8 << 2;
+const int ADDR_BASE_CONVERGED_MESSAGES = 9 << 2;
 const int ADDR_BASE_SENSITIVITY = 10 << 2;
+const int ADDR_BASE_END = 11 << 2;
 
 // CSR format of RBP graph
 uint32_t numV;
@@ -70,29 +57,6 @@ uint32_t *reverse_edge_dest;
 uint32_t *reverse_edge_id;
 message_t *messages;
 message_t *converged_messages;
-
-extern inline uint32_t timestamp(float32_t dist) {
-   assert(dist > 0.0 && dist <= 1.0);
-   uint32_t SCALING_FACTOR = 1 << 31;
-   float32_t scaled = dist * SCALING_FACTOR;
-   uint32_t ts = UINT32_MAX - 8 - ((uint32_t) scaled);
-   return ts;
-}
-
-extern inline float32_t absval(float32_t a) {
-   if (a < 0) {
-      return -a;
-   } else {
-      return a;
-   }
-}
-
-extern inline float32_t distance(float32_t *log1, float32_t *log2) {
-   float32_t ans = 0.0;
-   ans += absval(expf(log1[0]) - expf(log2[0]));
-   ans += absval(expf(log1[1]) - expf(log2[1]));
-   return ans;
-}
 
 void create_graph_from_file() {
    FILE *fp;
@@ -122,26 +86,39 @@ void create_graph_from_file() {
    printf("Number of vertices: %d, Number of edges: %d\n", numV, numE);
 
    // Read base address of the graph.
-   void *edge_indices_base;
-   void *edge_dest_base;
-   void *reverse_edge_indices_base;
-   void *reverse_edge_dest_base;
-   void *reverse_edge_id_base;
-   void *messages_base;
-   void *converged_base;
+   uint32_t edge_indices_base;
+   uint32_t edge_dest_base;
+   uint32_t reverse_edge_indices_base;
+   uint32_t reverse_edge_dest_base;
+   uint32_t reverse_edge_id_base;
 
-   fread(&edge_indices_base, sizeof(void *), 1, fp);
-   fread(&edge_dest_base, sizeof(void *), 1, fp);
-   fread(&reverse_edge_indices_base, sizeof(void *), 1, fp);
-   fread(&reverse_edge_dest_base, sizeof(void *), 1, fp);
-   fread(&reverse_edge_id_base, sizeof(void *), 1, fp);
-   fread(&messages_base, sizeof(void *), 1, fp);
-   fread(&converged_base, sizeof(void *), 1, fp);
+   uint32_t messages_base;
+   uint32_t converged_base;
+
+   fread(&edge_indices_base, sizeof(uint32_t), 1, fp);
+   fread(&edge_dest_base, sizeof(uint32_t), 1, fp);
+   fread(&reverse_edge_indices_base, sizeof(uint32_t), 1, fp);
+   fread(&reverse_edge_dest_base, sizeof(uint32_t), 1, fp);
+   fread(&reverse_edge_id_base, sizeof(uint32_t), 1, fp);
+   fread(&messages_base, sizeof(uint32_t), 1, fp);
+   fread(&converged_base, sizeof(uint32_t), 1, fp);
    read_cnt += 7;
 
    // Print the base addresses.
-   printf("edge_indices_base: %p, edge_dest_base: %p, reverse_edge_indices_base: %p, reverse_edge_dest_base: %p, reverse_edge_id_base: %p, messages_base: %p, converged_base: %p\n", 
-         edge_indices_base, edge_dest_base, reverse_edge_indices_base, reverse_edge_dest_base, reverse_edge_id_base, messages_base, converged_base);
+   printf("edge_indices_base: %d,\n
+         edge_dest_base: %d,\n
+         reverse_edge_indices_base: %d,\n
+         reverse_edge_dest_base: %d,\n
+         reverse_edge_id_base: %d,\n
+         messages_base: %d,\n
+         converged_base: %d\n", 
+         edge_indices_base, %p
+         edge_dest_base, 
+         reverse_edge_indices_base, 
+         reverse_edge_dest_base, 
+         reverse_edge_id_base, 
+         messages_base, 
+         converged_base);
 
    // Read sensitivity.
    fread(&sensitivity, sizeof(float32_t), 1, fp);
@@ -160,7 +137,7 @@ void create_graph_from_file() {
    converged_messages = (message_t *) calloc(numE * 2, sizeof(message_t));
 
    // Check if memory was allocated.
-   if (edge_indices == NULL || edge_dest == NULL || reverse_edge_indices == NULL || reverse_edge_dest == NULL || reverse_edge_id == NULL || messages == NULL) {
+   if (edge_indices == NULL || edge_dest == NULL || reverse_edge_indices == NULL || reverse_edge_dest == NULL || reverse_edge_id == NULL || messages == NULL || converged_messages == NULL) {
       printf("Error: Could not allocate memory for the graph.");
    }
 
@@ -232,9 +209,11 @@ void create_graph_from_file() {
       fread(&(messages[i].logMu[1]), sizeof(float32_t), 1, fp);
       fread(&(messages[i].lookAhead[0]), sizeof(float32_t), 1, fp);
       fread(&(messages[i].lookAhead[1]), sizeof(float32_t), 1, fp);
-      fread(&(messages[i].padding[0]), sizeof(uint32_t), 1, fp);
-      fread(&(messages[i].padding[1]), sizeof(uint32_t), 1, fp);
-      read_cnt += 8;
+      fread(&(messages[i].logsIn[0][0]), sizeof(uint32_t), 1, fp);
+      fread(&(messages[i].logsIn[0][1]), sizeof(uint32_t), 1, fp);
+      fread(&(messages[i].logsIn[1][0]), sizeof(uint32_t), 1, fp);
+      fread(&(messages[i].logsIn[1][1]), sizeof(uint32_t), 1, fp);
+      read_cnt += 10;
    }
 
    // Read words until we reach the base address of the converged messages.
@@ -250,9 +229,11 @@ void create_graph_from_file() {
       fread(&(converged_messages[i].logMu[1]), sizeof(float32_t), 1, fp);
       fread(&(converged_messages[i].lookAhead[0]), sizeof(float32_t), 1, fp);
       fread(&(converged_messages[i].lookAhead[1]), sizeof(float32_t), 1, fp);
-      fread(&(converged_messages[i].padding[0]), sizeof(uint32_t), 1, fp);
-      fread(&(converged_messages[i].padding[1]), sizeof(uint32_t), 1, fp);
-      read_cnt += 8;
+      fread(&(converged_messages[i].logsIn[0][0]), sizeof(uint32_t), 1, fp);
+      fread(&(converged_messages[i].logsIn[0][1]), sizeof(uint32_t), 1, fp);
+      fread(&(converged_messages[i].logsIn[1][0]), sizeof(uint32_t), 1, fp);
+      fread(&(converged_messages[i].logsIn[1][1]), sizeof(uint32_t), 1, fp);
+      read_cnt += 10;
    }
 
    // Close the file.
@@ -292,6 +273,18 @@ void print_graph() {
    printf("reverse_edge_id: ");
    for (uint32_t i = 0; i < numE; i++) {
       printf("%d ", reverse_edge_id[i]);
+   }
+   printf("\n");
+
+   // Print the nodes.
+   for (uint32_t i = 0; i < numV; i++) {
+      printf("Node %d: (%hf, %hf)\n", i, nodes[i].potential[0], nodes[i].potential[1]);
+   }
+   printf("\n");
+
+   // Print the edges.
+   for (uint32_t i = 0; i < numE; i++) {
+      printf("Edge %d: (%hf, %hf)\n", i, edges[i].potential[0], edges[i].potential[1]);
    }
    printf("\n");
 
@@ -371,6 +364,15 @@ void update_message_task(uint ts, uint mid,  uint enqueued_lookAhead_0, uint enq
    uint32_t CSC_position = reverse_edge_indices[j];
    uint32_t CSC_end = reverse_edge_indices[j + 1];
    uint32_t affected_mid = 0;
+
+   uint32_t reverse_mid;
+
+   if (mid % 2 == 0) {
+      reverse_mid = mid + 1;
+   } else {
+      reverse_mid = mid - 1;
+   }
+
    while ((CSR_position < CSR_end) || (CSC_position < CSC_end)) {
       if (CSR_position < CSR_end) {
          affected_mid = CSR_position * 2;
@@ -379,25 +381,56 @@ void update_message_task(uint ts, uint mid,  uint enqueued_lookAhead_0, uint enq
          affected_mid = reverse_edge_id[CSC_position] * 2 + 1;
          CSC_position++;
       }
-      enq_task_arg2(REPRIORITIZE_TASK, ts + 1, affected_mid, *((uint *) &delta_logMu[0]), *((uint *) &delta_logMu[1]));
+      if (affected_mid != reverse_mid) {
+         enq_task_arg2(REPRIORITIZE_TASK, ts + 1, affected_mid, *((uint *) &delta_logMu[0]), *((uint *) &delta_logMu[1]));
+      }
    }
    printf("\n");
 }
 
 void reprioritize_task(uint ts, uint mid, uint delta_logMu_0, uint delta_logMu_1) {
    printf("\nReprioritize task: mid-%d, deltaLogMu: (%hf, %hf)\n", mid, *((float32_t *) &delta_logMu_0), *((float32_t *) &delta_logMu_1));
-   float32_t old_lookAhead[2];
+   float32_t delta_logMu[2];
+
+   // put delta_logMu into array
+   delta_logMu[0] = *((float32_t *) &delta_logMu_0);
+   delta_logMu[1] = *((float32_t *) &delta_logMu_1);
+
    uint update_ts;
 
-   old_lookAhead[0] = messages[mid].lookAhead[0];
-   messages[mid].lookAhead[0] = old_lookAhead[0] + *((float32_t *) &delta_logMu_0);
-   undo_log_write((uint *) &(messages[mid].lookAhead[0]), *((uint *) (&old_lookAhead[0])));
+   // save old logsIn
+   undo_log_write((uint *) &(messages[mid].logsIn[0][0]), *((uint *) &(messages[mid].logsIn[0][0])));
+   undo_log_write((uint *) &(messages[mid].logsIn[0][1]), *((uint *) &(messages[mid].logsIn[0][1])));
+   undo_log_write((uint *) &(messages[mid].logsIn[1][0]), *((uint *) &(messages[mid].logsIn[1][0])));
+   undo_log_write((uint *) &(messages[mid].logsIn[1][1]), *((uint *) &(messages[mid].logsIn[1][1])));
 
-   old_lookAhead[1] = messages[mid].lookAhead[1];
-   messages[mid].lookAhead[1] = old_lookAhead[1] + *((float32_t *) &delta_logMu_1);
-   undo_log_write((uint *) &(messages[mid].lookAhead[1]), *((uint *) (&old_lookAhead[1])));
+   // update logsIn
+   float32_t result[2];
+   messages[mid].logsIn[0][0] += delta_logMu[0];
+   messages[mid].logsIn[0][1] += delta_logMu[1];   
+   messages[mid].logsIn[1][0] += delta_logMu[0];
+   messages[mid].logsIn[1][1] += delta_logMu[1];
 
-   printf("old lookAhead: (%hf, %hf)\n", old_lookAhead[0], old_lookAhead[1]);
+   // calculate new lookAhead
+   result[0] = logSum(logsIn[0][0], logsIn[0][1]);
+   result[1] = logSum(logsIn[1][0], logsIn[1][1]);
+
+   float32_t logTotalSum = logSum(result[0], result[1]);
+
+   // normalization
+   result[0] -= logTotalSum;
+   result[1] -= logTotalSum;
+
+   // save old lookAhead
+   undo_log_write((uint *) &(messages[mid].lookAhead[0]), *((uint *) &(messages[mid].lookAhead[0])));
+   undo_log_write((uint *) &(messages[mid].lookAhead[1]), *((uint *) &(messages[mid].lookAhead[1])));
+
+   printf("old lookAhead: (%hf, %hf)\n", messages[mid].lookAhead[0], messages[mid].lookAhead[1]);
+
+   // update lookAhead
+   messages[mid].lookAhead[0] = result[0];
+   messages[mid].lookAhead[1] = result[1];
+
    printf("new lookAhead: (%hf, %hf)\n", messages[mid].lookAhead[0], messages[mid].lookAhead[1]);
 
    float32_t residual = distance(messages[mid].logMu, messages[mid].lookAhead);

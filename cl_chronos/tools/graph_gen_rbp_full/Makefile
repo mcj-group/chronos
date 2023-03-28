@@ -15,25 +15,20 @@
 
 #VPATH = src:include:$(HDK_DIR)/common/software/src:$(HDK_DIR)/common/software/include
 
-INCLUDES = -I$(SDK_DIR)/userspace/include 
+CC = g++
+CFLAGS = -std=c++11 -O3 -Wall -g
 
-#CC = riscv-none-embed-gcc
-#CFLAGS = -march=rv32i -mabi=ilp32 -T linker_script 
-CC = riscv64-unknown-elf-g++
-CFLAGS = -march=rv32if -mabi=ilp32f  -T linker_script -DRISCV -specs=nosys.specs 
+LDLIBS = -lrt -lpthread
 
-
-SRC = main.c 
+SRC = graph_gen_rbp.cpp examples_mrf_CSR.cpp edge_CSR.cpp mrf_CSR.cpp residual_bp_CSR.cpp
 OBJ = $(SRC:.c=.o)
-BIN = main 
+BIN = graph_gen_rbp examples_mrf_CSR edge_CSR mrf_CSR residual_bp_CSR
 
 all: $(BIN) 
 
 $(BIN): $(OBJ)
-	$(CC) $(CFLAGS) -O3 -o $^ $(SRC) -lm
-	riscv64-unknown-elf-objdump -D main.o > main.dump
-	riscv64-unknown-elf-objcopy --output-target=ihex main.o main.hex
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 clean:
-	rm -f *.o *.hex *.dump $(BIN)
+	rm -f *.o $(BIN)
 
