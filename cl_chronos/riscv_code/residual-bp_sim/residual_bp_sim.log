@@ -1,0 +1,1367 @@
+Number of vertices: 4, Number of edges: 4
+edge_indices_base: 0x10, edge_dest_base: 0x20, reverse_edge_indices_base: 0x30, reverse_edge_dest_base: 0x40, reverse_edge_id_base: 0x50, messages_base: 0x60, converged_base: 0xa0
+sensitivity: 0.000010
+Graph created
+edge_indices: 0 2 3 4 0 
+edge_dest: 2 1 3 3 
+reverse_edge_indices: 0 0 1 2 4 
+reverse_edge_dest: 0 0 1 2 
+reverse_edge_id: 1 0 2 3 
+Message 0: (0, 2) = (-0.693147, -0.693147)
+Message 1: (2, 0) = (-0.693147, -0.693147)
+Message 2: (0, 1) = (-0.693147, -0.693147)
+Message 3: (1, 0) = (-0.693147, -0.693147)
+Message 4: (1, 3) = (-0.693147, -0.693147)
+Message 5: (3, 1) = (-0.693147, -0.693147)
+Message 6: (2, 3) = (-0.693147, -0.693147)
+Message 7: (3, 2) = (-0.693147, -0.693147)
+
+Converged Message 0: (0, 2) = (-0.656335, -0.731366)
+Converged Message 1: (2, 0) = (-0.727150, -0.660262)
+Converged Message 2: (0, 1) = (-1.172318, -0.370554)
+Converged Message 3: (1, 0) = (-1.100586, -0.404479)
+Converged Message 4: (1, 3) = (-0.958371, -0.483725)
+Converged Message 5: (3, 1) = (-0.644183, -0.744632)
+Converged Message 6: (2, 3) = (-0.857337, -0.552153)
+Converged Message 7: (3, 2) = (-0.747228, -0.641842)
+
+
+	Enq Task ts:   0 ttype: 0 locale:     0 args:(   0    0    0    0)
+Deq Task ts:   0 ttype: 0 locale:     0 args:(       0        0    0    0) 
+
+Init task
+	Enq Task ts:   1 ttype: 1 locale:     0 args:(   0    0    0    0)
+	Enq Task ts:   2 ttype: 1 locale:     1 args:(   0    0    0    0)
+	Enq Task ts:   3 ttype: 1 locale:     2 args:(   0    0    0    0)
+	Enq Task ts:   4 ttype: 1 locale:     3 args:(   0    0    0    0)
+	Enq Task ts:   5 ttype: 1 locale:     4 args:(   0    0    0    0)
+	Enq Task ts:   6 ttype: 1 locale:     5 args:(   0    0    0    0)
+	Enq Task ts:   7 ttype: 1 locale:     6 args:(   0    0    0    0)
+	Enq Task ts:   8 ttype: 1 locale:     7 args:(   0    0    0    0)
+
+Deq Task ts:   1 ttype: 1 locale:     0 args:(       0        0    0    0) 
+
+Enqueue update task: mid-0
+	Enq Task ts:f99ee077 ttype: 3 locale:     0 args:(bf24fea2 bf3e888a    0    0)
+
+Deq Task ts:   2 ttype: 1 locale:     1 args:(       0        0    0    0) 
+
+Enqueue update task: mid-1
+	Enq Task ts:fc0e3e37 ttype: 3 locale:     1 args:(bf397560 bf29ad12    0    0)
+
+Deq Task ts:   3 ttype: 1 locale:     2 args:(       0        0    0    0) 
+
+Enqueue update task: mid-2
+	Enq Task ts:ce5490b7 ttype: 3 locale:     2 args:(bf979543 bebb023c    0    0)
+
+Deq Task ts:   4 ttype: 1 locale:     3 args:(       0        0    0    0) 
+
+Enqueue update task: mid-3
+	Enq Task ts:d716e6f7 ttype: 3 locale:     3 args:(bf8a03d2 bed4e4d2    0    0)
+
+Deq Task ts:   5 ttype: 1 locale:     4 args:(       0        0    0    0) 
+
+Enqueue update task: mid-4
+	Enq Task ts:c641b7f7 ttype: 3 locale:     4 args:(bfa581bb bea44174    0    0)
+
+Deq Task ts:   6 ttype: 1 locale:     5 args:(       0        0    0    0) 
+
+Enqueue update task: mid-5
+	Enq Task ts:f86790f7 ttype: 3 locale:     5 args:(bf411b21 bf22b03e    0    0)
+
+Deq Task ts:   7 ttype: 1 locale:     6 args:(       0        0    0    0) 
+
+Enqueue update task: mid-6
+	Enq Task ts:eb503677 ttype: 3 locale:     6 args:(bf5e929d bf0b1816    0    0)
+
+Deq Task ts:   8 ttype: 1 locale:     7 args:(       0        0    0    0) 
+
+Enqueue update task: mid-7
+	Enq Task ts:fc600a37 ttype: 3 locale:     7 args:(bf2a4bf8 bf38cccc    0    0)
+
+Deq Task ts:c641b7f7 ttype: 3 locale:     4 args:(bfa581bb bea44174    0    0) 
+
+Update message task: mid-4
+old logMu: (-0.693147, -0.693147)
+new logMu: (-1.293022, -0.320812)
+delta logMu: (-0.599874, 0.372335)
+propagate
+	Enq Task ts:c641b7f8 ttype: 2 locale:     5 args:(bf19915e 3ebea2bc    0    0)
+	Enq Task ts:c641b7f8 ttype: 2 locale:     7 args:(bf19915e 3ebea2bc    0    0)
+
+Deq Task ts:c641b7f8 ttype: 2 locale:     5 args:(bf19915e 3ebea2bc    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-0.599874, 0.372335)
+old lookAhead: (-0.754320, -0.635502)
+new lookAhead: (-1.354195, -0.263166)
+residual: 0.510459
+	Enq Task ts:c641b7f9 ttype: 3 locale:     5 args:(bfad5640 be86bdc0    0    0)
+
+Deq Task ts:c641b7f8 ttype: 2 locale:     7 args:(bf19915e 3ebea2bc    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-0.599874, 0.372335)
+old lookAhead: (-0.665222, -0.721875)
+new lookAhead: (-1.265096, -0.349540)
+residual: 0.422800
+	Enq Task ts:c9e1ad77 ttype: 3 locale:     7 args:(bfa1eeab beb2f6dc    0    0)
+
+Deq Task ts:c641b7f9 ttype: 3 locale:     5 args:(bfad5640 be86bdc0    0    0) 
+
+Update message task: mid-5
+old logMu: (-0.693147, -0.693147)
+new logMu: (-1.354195, -0.263166)
+delta logMu: (-0.661047, 0.429981)
+propagate
+	Enq Task ts:c641b7fa ttype: 2 locale:     4 args:(bf293a68 3edc2670    0    0)
+	Enq Task ts:c641b7fa ttype: 2 locale:     3 args:(bf293a68 3edc2670    0    0)
+
+Deq Task ts:c641b7fa ttype: 2 locale:     4 args:(bf293a68 3edc2670    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-0.661047, 0.429981)
+old lookAhead: (-1.293022, -0.320812)
+new lookAhead: (-1.954069, 0.109169)
+residual: 0.522535
+	Enq Task ts:c641b7fb ttype: 3 locale:     4 args:(bffa1eef 3ddf93f0    0    0)
+
+Deq Task ts:c641b7fa ttype: 2 locale:     3 args:(bf293a68 3edc2670    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-0.661047, 0.429981)
+old lookAhead: (-1.078242, -0.415808)
+new lookAhead: (-1.739289, 0.014172)
+residual: 0.838628
+	Enq Task ts:c641b7fb ttype: 3 locale:     3 args:(bfdea106 3c6833c0    0    0)
+
+Deq Task ts:c641b7fb ttype: 3 locale:     4 args:(bffa1eef 3ddf93f0    0    0) 
+
+Update message task: mid-4
+old logMu: (-1.293022, -0.320812)
+new logMu: (-1.954069, 0.109169)
+delta logMu: (-0.661047, 0.429981)
+propagate
+	Enq Task ts:c641b7fc ttype: 2 locale:     5 args:(bf293a68 3edc2670    0    0)
+	Enq Task ts:c641b7fc ttype: 2 locale:     7 args:(bf293a68 3edc2670    0    0)
+
+Deq Task ts:c641b7fb ttype: 3 locale:     3 args:(bfdea106 3c6833c0    0    0) 
+
+Update message task: mid-3
+old logMu: (-0.693147, -0.693147)
+new logMu: (-1.739289, 0.014172)
+delta logMu: (-1.046142, 0.707320)
+propagate
+	Enq Task ts:c641b7fc ttype: 2 locale:     0 args:(bf85e7fa 3f3512e7    0    0)
+	Enq Task ts:c641b7fc ttype: 2 locale:     2 args:(bf85e7fa 3f3512e7    0    0)
+
+Deq Task ts:c641b7fc ttype: 2 locale:     5 args:(bf293a68 3edc2670    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-0.661047, 0.429981)
+old lookAhead: (-1.354195, -0.263166)
+new lookAhead: (-2.015242, 0.166814)
+residual: 0.537788
+	Enq Task ts:c641b7fd ttype: 3 locale:     5 args:(c000f9ba 3e2ad160    0    0)
+
+Deq Task ts:c641b7fc ttype: 2 locale:     2 args:(bf85e7fa 3f3512e7    0    0) 
+
+Reprioritize task: mid-2, deltaLogMu: (-1.046142, 0.707320)
+old lookAhead: (-1.184243, -0.365251)
+new lookAhead: (-2.230384, 0.342068)
+residual: 1.300369
+	Enq Task ts:c641b7fd ttype: 3 locale:     2 args:(c00ebe9e 3eaf2392    0    0)
+
+Deq Task ts:c641b7fc ttype: 2 locale:     7 args:(bf293a68 3edc2670    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-0.661047, 0.429981)
+old lookAhead: (-1.265096, -0.349540)
+new lookAhead: (-1.926144, 0.080441)
+residual: 0.938056
+	Enq Task ts:c641b7fd ttype: 3 locale:     7 args:(bff68bdf 3da4be50    0    0)
+
+Deq Task ts:c641b7fc ttype: 2 locale:     0 args:(bf85e7fa 3f3512e7    0    0) 
+
+Reprioritize task: mid-0, deltaLogMu: (-1.046142, 0.707320)
+old lookAhead: (-0.644510, -0.744271)
+new lookAhead: (-1.690652, -0.036951)
+residual: 0.779324
+	Enq Task ts:c641b7fd ttype: 3 locale:     0 args:(bfd8674b bd175a30    0    0)
+
+Deq Task ts:c641b7fd ttype: 3 locale:     5 args:(c000f9ba 3e2ad160    0    0) 
+
+Update message task: mid-5
+old logMu: (-1.354195, -0.263166)
+new logMu: (-2.015242, 0.166814)
+delta logMu: (-0.661047, 0.429981)
+propagate
+	Enq Task ts:c641b7fe ttype: 2 locale:     4 args:(bf293a68 3edc2670    0    0)
+	Enq Task ts:c641b7fe ttype: 2 locale:     3 args:(bf293a68 3edc2670    0    0)
+
+Deq Task ts:c641b7fd ttype: 3 locale:     2 args:(c00ebe9e 3eaf2392    0    0) 
+
+Update message task: mid-2
+old logMu: (-0.693147, -0.693147)
+new logMu: (-2.230384, 0.342068)
+delta logMu: (-1.537237, 1.035215)
+propagate
+	Enq Task ts:c641b7fe ttype: 2 locale:     4 args:(bfc4c430 3f8481f0    0    0)
+	Enq Task ts:c641b7fe ttype: 2 locale:     3 args:(bfc4c430 3f8481f0    0    0)
+
+Deq Task ts:c641b7fd ttype: 3 locale:     7 args:(bff68bdf 3da4be50    0    0) 
+
+Update message task: mid-7
+old logMu: (-0.693147, -0.693147)
+new logMu: (-1.926144, 0.080441)
+delta logMu: (-1.232996, 0.773588)
+propagate
+	Enq Task ts:c641b7fe ttype: 2 locale:     6 args:(bf9dd2d3 3f4609e2    0    0)
+	Enq Task ts:c641b7fe ttype: 2 locale:     1 args:(bf9dd2d3 3f4609e2    0    0)
+
+Deq Task ts:c641b7fd ttype: 3 locale:     0 args:(bfd8674b bd175a30    0    0) 
+
+Update message task: mid-0
+old logMu: (-0.693147, -0.693147)
+new logMu: (-1.690652, -0.036951)
+delta logMu: (-0.997505, 0.656196)
+propagate
+	Enq Task ts:c641b7fe ttype: 2 locale:     6 args:(bf7f5c7e 3f27fc75    0    0)
+	Enq Task ts:c641b7fe ttype: 2 locale:     1 args:(bf7f5c7e 3f27fc75    0    0)
+
+Deq Task ts:c641b7fe ttype: 2 locale:     3 args:(bfc4c430 3f8481f0    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-1.537237, 1.035215)
+old lookAhead: (-1.739289, 0.014172)
+new lookAhead: (-3.276526, 1.049388)
+residual: 1.979515
+	Enq Task ts:c641b7ff ttype: 3 locale:     3 args:(c051b29b 3f865258    0    0)
+
+Deq Task ts:c641b7fe ttype: 2 locale:     6 args:(bf9dd2d3 3f4609e2    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-1.232996, 0.773588)
+old lookAhead: (-0.869425, -0.543336)
+new lookAhead: (-2.102421, 0.230252)
+residual: 1.136757
+	Enq Task ts:c641b7ff ttype: 3 locale:     6 args:(c0068e11 3e6bc730    0    0)
+
+Deq Task ts:c641b7fe ttype: 2 locale:     1 args:(bf9dd2d3 3f4609e2    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-1.232996, 0.773588)
+old lookAhead: (-0.724447, -0.662797)
+new lookAhead: (-1.957444, 0.110791)
+residual: 0.975943
+	Enq Task ts:c641b7ff ttype: 3 locale:     1 args:(bffa8d83 3de2e680    0    0)
+
+Deq Task ts:c641b7fe ttype: 2 locale:     6 args:(bf7f5c7e 3f27fc75    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-0.997505, 0.656196)
+old lookAhead: (-2.102421, 0.230252)
+new lookAhead: (-3.099926, 0.886448)
+residual: 2.381443
+	Enq Task ts:cf2ce1f7 ttype: 3 locale:     6 args:(c0466530 3f62ee41    0    0)
+
+Deq Task ts:c641b7fe ttype: 2 locale:     4 args:(bf293a68 3edc2670    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-0.661047, 0.429981)
+old lookAhead: (-1.954069, 0.109169)
+new lookAhead: (-2.615117, 0.539150)
+residual: 0.667735
+	Enq Task ts:c641b7ff ttype: 3 locale:     4 args:(c0275e12 3f0a05b6    0    0)
+
+Deq Task ts:c641b7fe ttype: 2 locale:     4 args:(bfc4c430 3f8481f0    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-1.537237, 1.035215)
+old lookAhead: (-2.615117, 0.539150)
+new lookAhead: (-4.152354, 1.574365)
+residual: 3.838294
+	Enq Task ts:c641b7ff ttype: 3 locale:     4 args:(c084e015 3fc984cb    0    0)
+
+Deq Task ts:c641b7fe ttype: 2 locale:     3 args:(bf293a68 3edc2670    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-0.661047, 0.429981)
+old lookAhead: (-3.276526, 1.049388)
+new lookAhead: (-3.937574, 1.479369)
+residual: 3.532050
+	Enq Task ts:c641b7ff ttype: 3 locale:     3 args:(c07c0135 3fbd5bf4    0    0)
+
+Deq Task ts:c641b7fe ttype: 2 locale:     1 args:(bf7f5c7e 3f27fc75    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-0.997505, 0.656196)
+old lookAhead: (-1.957444, 0.110791)
+new lookAhead: (-2.954949, 0.766987)
+residual: 2.101188
+	Enq Task ts:f30c47f7 ttype: 3 locale:     1 args:(c03d1de1 3f445945    0    0)
+
+Deq Task ts:c641b7ff ttype: 3 locale:     1 args:(bffa8d83 3de2e680    0    0) 
+
+Update message task: mid-1
+aborted, not most up-to-date copy
+Deq Task ts:c641b7ff ttype: 3 locale:     4 args:(c0275e12 3f0a05b6    0    0) 
+
+Update message task: mid-4
+aborted, not most up-to-date copy
+Deq Task ts:c641b7ff ttype: 3 locale:     3 args:(c07c0135 3fbd5bf4    0    0) 
+
+Update message task: mid-3
+old logMu: (-1.739289, 0.014172)
+new logMu: (-3.937574, 1.479369)
+delta logMu: (-2.198285, 1.465196)
+propagate
+	Enq Task ts:c641b800 ttype: 2 locale:     0 args:(c00cb0b2 3fbb8b8c    0    0)
+	Enq Task ts:c641b800 ttype: 2 locale:     2 args:(c00cb0b2 3fbb8b8c    0    0)
+
+Deq Task ts:c641b7ff ttype: 3 locale:     3 args:(c051b29b 3f865258    0    0) 
+
+Update message task: mid-3
+aborted, not most up-to-date copy
+Deq Task ts:c641b7ff ttype: 3 locale:     6 args:(c0068e11 3e6bc730    0    0) 
+
+Update message task: mid-6
+aborted, not most up-to-date copy
+Deq Task ts:c641b7ff ttype: 3 locale:     4 args:(c084e015 3fc984cb    0    0) 
+
+Update message task: mid-4
+old logMu: (-1.954069, 0.109169)
+new logMu: (-4.152354, 1.574365)
+delta logMu: (-2.198285, 1.465196)
+propagate
+	Enq Task ts:c641b800 ttype: 2 locale:     5 args:(c00cb0b2 3fbb8b8c    0    0)
+	Enq Task ts:c641b800 ttype: 2 locale:     7 args:(c00cb0b2 3fbb8b8c    0    0)
+
+Deq Task ts:c641b800 ttype: 2 locale:     0 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-0, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-1.690652, -0.036951)
+new lookAhead: (-3.888937, 1.428245)
+residual: 3.371580
+	Enq Task ts:c641b801 ttype: 3 locale:     0 args:(c078e458 3fb6d0ba    0    0)
+
+Deq Task ts:c641b800 ttype: 2 locale:     2 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-2, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-2.230384, 0.342068)
+new lookAhead: (-4.428669, 1.807264)
+residual: 4.781455
+	Enq Task ts:c641b801 ttype: 3 locale:     2 args:(c08db7a8 3fe75470    0    0)
+
+Deq Task ts:c641b800 ttype: 2 locale:     7 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-1.926144, 0.080441)
+new lookAhead: (-4.124428, 1.545637)
+residual: 3.736731
+	Enq Task ts:c641b801 ttype: 3 locale:     7 args:(c083fb51 3fc5d771    0    0)
+
+Deq Task ts:c641b800 ttype: 2 locale:     5 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-2.015242, 0.166814)
+new lookAhead: (-4.213527, 1.632010)
+residual: 4.051105
+	Enq Task ts:f9755ff7 ttype: 3 locale:     5 args:(c086d536 3fd0e5b8    0    0)
+
+Deq Task ts:c641b801 ttype: 3 locale:     0 args:(c078e458 3fb6d0ba    0    0) 
+
+Update message task: mid-0
+old logMu: (-1.690652, -0.036951)
+new logMu: (-3.888937, 1.428245)
+delta logMu: (-2.198285, 1.465196)
+propagate
+	Enq Task ts:c641b802 ttype: 2 locale:     6 args:(c00cb0b2 3fbb8b8c    0    0)
+	Enq Task ts:c641b802 ttype: 2 locale:     1 args:(c00cb0b2 3fbb8b8c    0    0)
+
+Deq Task ts:c641b801 ttype: 3 locale:     2 args:(c08db7a8 3fe75470    0    0) 
+
+Update message task: mid-2
+old logMu: (-2.230384, 0.342068)
+new logMu: (-4.428669, 1.807264)
+delta logMu: (-2.198285, 1.465196)
+propagate
+	Enq Task ts:c641b802 ttype: 2 locale:     4 args:(c00cb0b2 3fbb8b8c    0    0)
+	Enq Task ts:c641b802 ttype: 2 locale:     3 args:(c00cb0b2 3fbb8b8c    0    0)
+
+Deq Task ts:c641b801 ttype: 3 locale:     7 args:(c083fb51 3fc5d771    0    0) 
+
+Update message task: mid-7
+old logMu: (-1.926144, 0.080441)
+new logMu: (-4.124428, 1.545637)
+delta logMu: (-2.198285, 1.465196)
+propagate
+	Enq Task ts:c641b802 ttype: 2 locale:     6 args:(c00cb0b2 3fbb8b8c    0    0)
+	Enq Task ts:c641b802 ttype: 2 locale:     1 args:(c00cb0b2 3fbb8b8c    0    0)
+
+Deq Task ts:c641b802 ttype: 2 locale:     6 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-3.099926, 0.886448)
+new lookAhead: (-5.298211, 2.351644)
+residual: 10.497823
+	Enq Task ts:c641b803 ttype: 3 locale:     6 args:(c0a98af1 40168156    0    0)
+
+Deq Task ts:c641b802 ttype: 2 locale:     1 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-2.954949, 0.766987)
+new lookAhead: (-5.153234, 2.232183)
+residual: 9.314411
+	Enq Task ts:c641b803 ttype: 3 locale:     1 args:(c0a4e74a 400edc17    0    0)
+
+Deq Task ts:c641b802 ttype: 2 locale:     4 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-4.152354, 1.574365)
+new lookAhead: (-6.350638, 3.039561)
+residual: 16.082380
+	Enq Task ts:f5748ff7 ttype: 3 locale:     4 args:(c0cb386e 4042882c    0    0)
+
+Deq Task ts:c641b802 ttype: 2 locale:     3 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-3.937574, 1.479369)
+new lookAhead: (-6.135859, 2.944565)
+residual: 14.629550
+	Enq Task ts:c641b803 ttype: 3 locale:     3 args:(c0c458f4 403c73c0    0    0)
+
+Deq Task ts:c641b802 ttype: 2 locale:     6 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-5.298211, 2.351644)
+new lookAhead: (-7.496495, 3.816840)
+residual: 45.459778
+	Enq Task ts:c641b803 ttype: 3 locale:     6 args:(c0efe34a 4074471c    0    0)
+
+Deq Task ts:c641b802 ttype: 2 locale:     1 args:(c00cb0b2 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-5.153234, 2.232183)
+new lookAhead: (-7.351518, 3.697379)
+residual: 40.340805
+	Enq Task ts:d4607ff7 ttype: 3 locale:     1 args:(c0eb3fa3 406ca1dd    0    0)
+
+Deq Task ts:c641b803 ttype: 3 locale:     6 args:(c0a98af1 40168156    0    0) 
+
+Update message task: mid-6
+aborted, not most up-to-date copy
+Deq Task ts:c641b803 ttype: 3 locale:     1 args:(c0a4e74a 400edc17    0    0) 
+
+Update message task: mid-1
+aborted, not most up-to-date copy
+Deq Task ts:c641b803 ttype: 3 locale:     3 args:(c0c458f4 403c73c0    0    0) 
+
+Update message task: mid-3
+old logMu: (-3.937574, 1.479369)
+new logMu: (-6.135859, 2.944565)
+delta logMu: (-2.198285, 1.465196)
+propagate
+	Enq Task ts:c641b804 ttype: 2 locale:     0 args:(c00cb0b3 3fbb8b8c    0    0)
+	Enq Task ts:c641b804 ttype: 2 locale:     2 args:(c00cb0b3 3fbb8b8c    0    0)
+
+Deq Task ts:c641b803 ttype: 3 locale:     6 args:(c0efe34a 4074471c    0    0) 
+
+Update message task: mid-6
+old logMu: (-0.693147, -0.693147)
+new logMu: (-7.496495, 3.816840)
+delta logMu: (-6.803348, 4.509987)
+propagate
+	Enq Task ts:c641b804 ttype: 2 locale:     5 args:(c0d9b507 409051d1    0    0)
+	Enq Task ts:c641b804 ttype: 2 locale:     7 args:(c0d9b507 409051d1    0    0)
+
+Deq Task ts:c641b804 ttype: 2 locale:     0 args:(c00cb0b3 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-0, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-3.888937, 1.428245)
+new lookAhead: (-6.087222, 2.893441)
+residual: 13.902154
+	Enq Task ts:c641b805 ttype: 3 locale:     0 args:(c0c2ca86 40392e23    0    0)
+
+Deq Task ts:c641b804 ttype: 2 locale:     2 args:(c00cb0b3 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-2, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-4.428669, 1.807264)
+new lookAhead: (-6.626954, 3.272460)
+residual: 20.293011
+	Enq Task ts:da7e9ff7 ttype: 3 locale:     2 args:(c0d41002 40516ffe    0    0)
+
+Deq Task ts:c641b804 ttype: 2 locale:     5 args:(c0d9b507 409051d1    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-6.803348, 4.509987)
+old lookAhead: (-4.213527, 1.632010)
+new lookAhead: (-11.016874, 6.141998)
+residual: 463.933319
+	Enq Task ts:c641b805 ttype: 3 locale:     5 args:(c130451e 40c48b3f    0    0)
+
+Deq Task ts:c641b804 ttype: 2 locale:     7 args:(c0d9b507 409051d1    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-6.803348, 4.509987)
+old lookAhead: (-4.124428, 1.545637)
+new lookAhead: (-10.927776, 6.055624)
+residual: 421.830353
+	Enq Task ts:c641b805 ttype: 3 locale:     7 args:(c12ed82c 40c1c7ad    0    0)
+
+Deq Task ts:c641b805 ttype: 3 locale:     0 args:(c0c2ca86 40392e23    0    0) 
+
+Update message task: mid-0
+old logMu: (-3.888937, 1.428245)
+new logMu: (-6.087222, 2.893441)
+delta logMu: (-2.198285, 1.465196)
+propagate
+	Enq Task ts:c641b806 ttype: 2 locale:     6 args:(c00cb0b4 3fbb8b8c    0    0)
+	Enq Task ts:c641b806 ttype: 2 locale:     1 args:(c00cb0b4 3fbb8b8c    0    0)
+
+Deq Task ts:c641b805 ttype: 3 locale:     5 args:(c130451e 40c48b3f    0    0) 
+
+Update message task: mid-5
+old logMu: (-2.015242, 0.166814)
+new logMu: (-11.016874, 6.141998)
+delta logMu: (-9.001633, 5.975183)
+propagate
+	Enq Task ts:c641b806 ttype: 2 locale:     4 args:(c11006b0 40bf34b4    0    0)
+	Enq Task ts:c641b806 ttype: 2 locale:     3 args:(c11006b0 40bf34b4    0    0)
+
+Deq Task ts:c641b805 ttype: 3 locale:     7 args:(c12ed82c 40c1c7ad    0    0) 
+
+Update message task: mid-7
+old logMu: (-4.124428, 1.545637)
+new logMu: (-10.927776, 6.055624)
+delta logMu: (-6.803348, 4.509987)
+propagate
+	Enq Task ts:c641b806 ttype: 2 locale:     6 args:(c0d9b507 409051d1    0    0)
+	Enq Task ts:c641b806 ttype: 2 locale:     1 args:(c0d9b507 409051d1    0    0)
+
+Deq Task ts:c641b806 ttype: 2 locale:     6 args:(c00cb0b4 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-7.496495, 3.816840)
+new lookAhead: (-9.694780, 5.282036)
+residual: 151.310303
+	Enq Task ts:c641b807 ttype: 3 locale:     6 args:(c11b1dd2 40a90671    0    0)
+
+Deq Task ts:c641b806 ttype: 2 locale:     1 args:(c00cb0b4 3fbb8b8c    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-2.198285, 1.465196)
+old lookAhead: (-7.351518, 3.697379)
+new lookAhead: (-9.549803, 5.162576)
+residual: 174.613556
+	Enq Task ts:c641b807 ttype: 3 locale:     1 args:(c118cbfe 40a533d2    0    0)
+
+Deq Task ts:c641b806 ttype: 2 locale:     1 args:(c0d9b507 409051d1    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-6.803348, 4.509987)
+old lookAhead: (-9.549803, 5.162576)
+new lookAhead: (-16.353151, 9.672564)
+residual: 15875.996094
+	Enq Task ts:c641b807 ttype: 3 locale:     1 args:(c182d341 411ac2d2    0    0)
+
+Deq Task ts:c641b806 ttype: 2 locale:     4 args:(c11006b0 40bf34b4    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-9.001633, 5.975183)
+old lookAhead: (-6.350638, 3.039561)
+new lookAhead: (-15.352271, 9.014745)
+residual: 8218.634766
+	Enq Task ts:c641b807 ttype: 3 locale:     4 args:(c175a2e7 41103c65    0    0)
+
+Deq Task ts:c641b806 ttype: 2 locale:     3 args:(c11006b0 40bf34b4    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-9.001633, 5.975183)
+old lookAhead: (-6.135859, 2.944565)
+new lookAhead: (-15.137491, 8.919748)
+residual: 7459.206055
+	Enq Task ts:c641b807 ttype: 3 locale:     3 args:(c172332a 410eb74a    0    0)
+
+Deq Task ts:c641b806 ttype: 2 locale:     6 args:(c0d9b507 409051d1    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-6.803348, 4.509987)
+old lookAhead: (-9.694780, 5.282036)
+new lookAhead: (-16.498129, 9.792024)
+residual: 17845.013672
+	Enq Task ts:c641b807 ttype: 3 locale:     6 args:(c183fc2b 411cac21    0    0)
+
+Deq Task ts:c641b807 ttype: 3 locale:     6 args:(c11b1dd2 40a90671    0    0) 
+
+Update message task: mid-6
+aborted, not most up-to-date copy
+Deq Task ts:c641b807 ttype: 3 locale:     1 args:(c118cbfe 40a533d2    0    0) 
+
+Update message task: mid-1
+aborted, not most up-to-date copy
+Deq Task ts:c641b807 ttype: 3 locale:     4 args:(c175a2e7 41103c65    0    0) 
+
+Update message task: mid-4
+old logMu: (-4.152354, 1.574365)
+new logMu: (-15.352271, 9.014745)
+delta logMu: (-11.199917, 7.440380)
+propagate
+	Enq Task ts:c641b808 ttype: 2 locale:     5 args:(c13332dc 40ee1797    0    0)
+	Enq Task ts:c641b808 ttype: 2 locale:     7 args:(c13332dc 40ee1797    0    0)
+
+Deq Task ts:c641b807 ttype: 3 locale:     3 args:(c172332a 410eb74a    0    0) 
+
+Update message task: mid-3
+old logMu: (-6.135859, 2.944565)
+new logMu: (-15.137491, 8.919748)
+delta logMu: (-9.001633, 5.975183)
+propagate
+	Enq Task ts:c641b808 ttype: 2 locale:     0 args:(c11006b0 40bf34b4    0    0)
+	Enq Task ts:c641b808 ttype: 2 locale:     2 args:(c11006b0 40bf34b4    0    0)
+
+Deq Task ts:c641b807 ttype: 3 locale:     6 args:(c183fc2b 411cac21    0    0) 
+
+Update message task: mid-6
+old logMu: (-7.496495, 3.816840)
+new logMu: (-16.498129, 9.792024)
+delta logMu: (-9.001634, 5.975183)
+propagate
+	Enq Task ts:c641b808 ttype: 2 locale:     5 args:(c11006b1 40bf34b4    0    0)
+	Enq Task ts:c641b808 ttype: 2 locale:     7 args:(c11006b1 40bf34b4    0    0)
+
+Deq Task ts:c641b807 ttype: 3 locale:     1 args:(c182d341 411ac2d2    0    0) 
+
+Update message task: mid-1
+old logMu: (-0.693147, -0.693147)
+new logMu: (-16.353151, 9.672564)
+delta logMu: (-15.660004, 10.365711)
+propagate
+	Enq Task ts:c641b808 ttype: 2 locale:     0 args:(c17a8f60 4125d9f4    0    0)
+	Enq Task ts:c641b808 ttype: 2 locale:     2 args:(c17a8f60 4125d9f4    0    0)
+
+Deq Task ts:c641b808 ttype: 2 locale:     2 args:(c11006b0 40bf34b4    0    0) 
+
+Reprioritize task: mid-2, deltaLogMu: (-9.001633, 5.975183)
+old lookAhead: (-6.626954, 3.272460)
+new lookAhead: (-15.628587, 9.247644)
+residual: 10374.003906
+	Enq Task ts:ff7ffff7 ttype: 3 locale:     2 args:(c17a0eb1 4113f65a    0    0)
+
+Deq Task ts:c641b808 ttype: 2 locale:     5 args:(c11006b1 40bf34b4    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-9.001634, 5.975183)
+old lookAhead: (-11.016874, 6.141998)
+new lookAhead: (-20.018509, 12.117182)
+residual: 182524.093750
+	Enq Task ts:f3fffff7 ttype: 3 locale:     5 args:(c1a025e8 4141dffa    0    0)
+
+Deq Task ts:c641b808 ttype: 2 locale:     7 args:(c11006b1 40bf34b4    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-9.001634, 5.975183)
+old lookAhead: (-10.927776, 6.055624)
+new lookAhead: (-19.929409, 12.030807)
+residual: 167420.390625
+	Enq Task ts:cdfffff7 ttype: 3 locale:     7 args:(c19f6f6e 41407e30    0    0)
+
+Deq Task ts:c641b808 ttype: 2 locale:     2 args:(c17a8f60 4125d9f4    0    0) 
+
+Reprioritize task: mid-2, deltaLogMu: (-15.660004, 10.365711)
+old lookAhead: (-15.628587, 9.247644)
+new lookAhead: (-31.288589, 19.613356)
+residual: 329588544.000000
+	Enq Task ts:fffffff7 ttype: 3 locale:     2 args:(c1fa4f08 419ce827    0    0)
+
+Deq Task ts:c641b808 ttype: 2 locale:     0 args:(c17a8f60 4125d9f4    0    0) 
+
+Reprioritize task: mid-0, deltaLogMu: (-15.660004, 10.365711)
+old lookAhead: (-6.087222, 2.893441)
+new lookAhead: (-21.747227, 13.259152)
+residual: 573275.062500
+	Enq Task ts:c641b809 ttype: 3 locale:     0 args:(c1adfa52 4154257d    0    0)
+
+Deq Task ts:c641b808 ttype: 2 locale:     5 args:(c13332dc 40ee1797    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-11.199917, 7.440380)
+old lookAhead: (-20.018509, 12.117182)
+new lookAhead: (-31.218426, 19.557562)
+residual: 311702688.000000
+	Enq Task ts:fffffff7 ttype: 3 locale:     5 args:(c1f9bf56 419c75e3    0    0)
+
+Deq Task ts:c641b808 ttype: 2 locale:     7 args:(c13332dc 40ee1797    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-11.199917, 7.440380)
+old lookAhead: (-19.929409, 12.030807)
+new lookAhead: (-31.129326, 19.471188)
+residual: 285909568.000000
+	Enq Task ts:fffffff7 ttype: 3 locale:     7 args:(c1f908dc 419bc4fe    0    0)
+
+Deq Task ts:c641b808 ttype: 2 locale:     0 args:(c11006b0 40bf34b4    0    0) 
+
+Reprioritize task: mid-0, deltaLogMu: (-9.001633, 5.975183)
+old lookAhead: (-21.747227, 13.259152)
+new lookAhead: (-30.748859, 19.234337)
+residual: 225614144.000000
+	Enq Task ts:fffffff7 ttype: 3 locale:     0 args:(c1f5fdaa 4199dfec    0    0)
+
+Deq Task ts:c641b809 ttype: 3 locale:     0 args:(c1adfa52 4154257d    0    0) 
+
+Update message task: mid-0
+aborted, not most up-to-date copy
+Deq Task ts:c9e1ad77 ttype: 3 locale:     7 args:(bfa1eeab beb2f6dc    0    0) 
+
+Update message task: mid-7
+aborted, not most up-to-date copy
+Deq Task ts:cdfffff7 ttype: 3 locale:     7 args:(c19f6f6e 41407e30    0    0) 
+
+Update message task: mid-7
+aborted, not most up-to-date copy
+Deq Task ts:ce5490b7 ttype: 3 locale:     2 args:(bf979543 bebb023c    0    0) 
+
+Update message task: mid-2
+aborted, not most up-to-date copy
+Deq Task ts:cf2ce1f7 ttype: 3 locale:     6 args:(c0466530 3f62ee41    0    0) 
+
+Update message task: mid-6
+aborted, not most up-to-date copy
+Deq Task ts:d4607ff7 ttype: 3 locale:     1 args:(c0eb3fa3 406ca1dd    0    0) 
+
+Update message task: mid-1
+aborted, not most up-to-date copy
+Deq Task ts:d716e6f7 ttype: 3 locale:     3 args:(bf8a03d2 bed4e4d2    0    0) 
+
+Update message task: mid-3
+aborted, not most up-to-date copy
+Deq Task ts:da7e9ff7 ttype: 3 locale:     2 args:(c0d41002 40516ffe    0    0) 
+
+Update message task: mid-2
+aborted, not most up-to-date copy
+Deq Task ts:eb503677 ttype: 3 locale:     6 args:(bf5e929d bf0b1816    0    0) 
+
+Update message task: mid-6
+aborted, not most up-to-date copy
+Deq Task ts:f30c47f7 ttype: 3 locale:     1 args:(c03d1de1 3f445945    0    0) 
+
+Update message task: mid-1
+aborted, not most up-to-date copy
+Deq Task ts:f3fffff7 ttype: 3 locale:     5 args:(c1a025e8 4141dffa    0    0) 
+
+Update message task: mid-5
+aborted, not most up-to-date copy
+Deq Task ts:f5748ff7 ttype: 3 locale:     4 args:(c0cb386e 4042882c    0    0) 
+
+Update message task: mid-4
+aborted, not most up-to-date copy
+Deq Task ts:f86790f7 ttype: 3 locale:     5 args:(bf411b21 bf22b03e    0    0) 
+
+Update message task: mid-5
+aborted, not most up-to-date copy
+Deq Task ts:f9755ff7 ttype: 3 locale:     5 args:(c086d536 3fd0e5b8    0    0) 
+
+Update message task: mid-5
+aborted, not most up-to-date copy
+Deq Task ts:f99ee077 ttype: 3 locale:     0 args:(bf24fea2 bf3e888a    0    0) 
+
+Update message task: mid-0
+aborted, not most up-to-date copy
+Deq Task ts:fc0e3e37 ttype: 3 locale:     1 args:(bf397560 bf29ad12    0    0) 
+
+Update message task: mid-1
+aborted, not most up-to-date copy
+Deq Task ts:fc600a37 ttype: 3 locale:     7 args:(bf2a4bf8 bf38cccc    0    0) 
+
+Update message task: mid-7
+aborted, not most up-to-date copy
+Deq Task ts:ff7ffff7 ttype: 3 locale:     2 args:(c17a0eb1 4113f65a    0    0) 
+
+Update message task: mid-2
+aborted, not most up-to-date copy
+Deq Task ts:fffffff7 ttype: 3 locale:     7 args:(c1f908dc 419bc4fe    0    0) 
+
+Update message task: mid-7
+old logMu: (-10.927776, 6.055624)
+new logMu: (-31.129326, 19.471188)
+delta logMu: (-20.201550, 13.415564)
+propagate
+	Enq Task ts:fffffff8 ttype: 2 locale:     6 args:(c1a19cc6 4156a626    0    0)
+	Enq Task ts:fffffff8 ttype: 2 locale:     1 args:(c1a19cc6 4156a626    0    0)
+
+Deq Task ts:fffffff7 ttype: 3 locale:     5 args:(c1f9bf56 419c75e3    0    0) 
+
+Update message task: mid-5
+old logMu: (-11.016874, 6.141998)
+new logMu: (-31.218426, 19.557562)
+delta logMu: (-20.201551, 13.415564)
+propagate
+	Enq Task ts:fffffff8 ttype: 2 locale:     4 args:(c1a19cc7 4156a626    0    0)
+	Enq Task ts:fffffff8 ttype: 2 locale:     3 args:(c1a19cc7 4156a626    0    0)
+
+Deq Task ts:fffffff7 ttype: 3 locale:     2 args:(c1fa4f08 419ce827    0    0) 
+
+Update message task: mid-2
+old logMu: (-4.428669, 1.807264)
+new logMu: (-31.288589, 19.613356)
+delta logMu: (-26.859921, 17.806091)
+propagate
+	Enq Task ts:fffffff8 ttype: 2 locale:     4 args:(c1d6e11e 418e72e0    0    0)
+	Enq Task ts:fffffff8 ttype: 2 locale:     3 args:(c1d6e11e 418e72e0    0    0)
+
+Deq Task ts:fffffff7 ttype: 3 locale:     0 args:(c1f5fdaa 4199dfec    0    0) 
+
+Update message task: mid-0
+old logMu: (-6.087222, 2.893441)
+new logMu: (-30.748859, 19.234337)
+delta logMu: (-24.661636, 16.340897)
+propagate
+	Enq Task ts:fffffff8 ttype: 2 locale:     6 args:(c1c54b08 4182ba28    0    0)
+	Enq Task ts:fffffff8 ttype: 2 locale:     1 args:(c1c54b08 4182ba28    0    0)
+
+Deq Task ts:fffffff8 ttype: 2 locale:     1 args:(c1a19cc6 4156a626    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-20.201550, 13.415564)
+old lookAhead: (-16.353151, 9.672564)
+new lookAhead: (-36.554703, 23.088127)
+residual: 10642546688.000000
+	Enq Task ts:fffffff9 ttype: 3 locale:     1 args:(c2123804 41b8b47c    0    0)
+
+Deq Task ts:fffffff8 ttype: 2 locale:     4 args:(c1d6e11e 418e72e0    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-26.859921, 17.806091)
+old lookAhead: (-15.352271, 9.014745)
+new lookAhead: (-42.212193, 26.820835)
+residual: 444775333888.000000
+	Enq Task ts:fffffff9 ttype: 3 locale:     4 args:(c228d949 41d69112    0    0)
+
+Deq Task ts:fffffff8 ttype: 2 locale:     6 args:(c1c54b08 4182ba28    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-24.661636, 16.340897)
+old lookAhead: (-16.498129, 9.792024)
+new lookAhead: (-41.159767, 26.132919)
+residual: 223554093056.000000
+	Enq Task ts:fffffff9 ttype: 3 locale:     6 args:(c224a39a 41d11038    0    0)
+
+Deq Task ts:fffffff8 ttype: 2 locale:     1 args:(c1c54b08 4182ba28    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-24.661636, 16.340897)
+old lookAhead: (-36.554703, 23.088127)
+new lookAhead: (-61.216339, 39.429024)
+residual: 132986463955451904.000000
+	Enq Task ts:fffffff9 ttype: 3 locale:     1 args:(c274dd88 421db752    0    0)
+
+Deq Task ts:fffffff8 ttype: 2 locale:     3 args:(c1d6e11e 418e72e0    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-26.859921, 17.806091)
+old lookAhead: (-15.137491, 8.919748)
+new lookAhead: (-41.997414, 26.725840)
+residual: 404468465664.000000
+	Enq Task ts:fffffff9 ttype: 3 locale:     3 args:(c227fd5a 41d5ce85    0    0)
+
+Deq Task ts:fffffff8 ttype: 2 locale:     4 args:(c1a19cc7 4156a626    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-20.201551, 13.415564)
+old lookAhead: (-42.212193, 26.820835)
+new lookAhead: (-62.413742, 40.236397)
+residual: 298157076364918784.000000
+	Enq Task ts:fffffff9 ttype: 3 locale:     4 args:(c279a7ac 4220f212    0    0)
+
+Deq Task ts:fffffff8 ttype: 2 locale:     3 args:(c1a19cc7 4156a626    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-20.201551, 13.415564)
+old lookAhead: (-41.997414, 26.725840)
+new lookAhead: (-62.198967, 40.141403)
+residual: 271137694803820544.000000
+	Enq Task ts:fffffff9 ttype: 3 locale:     3 args:(c278cbbe 422090cc    0    0)
+
+Deq Task ts:fffffff8 ttype: 2 locale:     6 args:(c1a19cc6 4156a626    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-20.201550, 13.415564)
+old lookAhead: (-41.159767, 26.132919)
+new lookAhead: (-61.361317, 39.548485)
+residual: 149861029684183040.000000
+	Enq Task ts:fffffff9 ttype: 3 locale:     6 args:(c27571fd 421e31a6    0    0)
+
+Deq Task ts:fffffff9 ttype: 3 locale:     1 args:(c2123804 41b8b47c    0    0) 
+
+Update message task: mid-1
+aborted, not most up-to-date copy
+Deq Task ts:fffffff9 ttype: 3 locale:     6 args:(c224a39a 41d11038    0    0) 
+
+Update message task: mid-6
+aborted, not most up-to-date copy
+Deq Task ts:fffffff9 ttype: 3 locale:     3 args:(c278cbbe 422090cc    0    0) 
+
+Update message task: mid-3
+old logMu: (-15.137491, 8.919748)
+new logMu: (-62.198967, 40.141403)
+delta logMu: (-47.061478, 31.221655)
+propagate
+	Enq Task ts:fffffffa ttype: 2 locale:     0 args:(c23c3ef4 41f9c5f3    0    0)
+	Enq Task ts:fffffffa ttype: 2 locale:     2 args:(c23c3ef4 41f9c5f3    0    0)
+
+Deq Task ts:fffffff9 ttype: 3 locale:     4 args:(c228d949 41d69112    0    0) 
+
+Update message task: mid-4
+aborted, not most up-to-date copy
+Deq Task ts:fffffff9 ttype: 3 locale:     6 args:(c27571fd 421e31a6    0    0) 
+
+Update message task: mid-6
+old logMu: (-16.498129, 9.792024)
+new logMu: (-61.361317, 39.548485)
+delta logMu: (-44.863190, 29.756462)
+propagate
+	Enq Task ts:fffffffa ttype: 2 locale:     5 args:(c23373e8 41ee0d3c    0    0)
+	Enq Task ts:fffffffa ttype: 2 locale:     7 args:(c23373e8 41ee0d3c    0    0)
+
+Deq Task ts:fffffff9 ttype: 3 locale:     1 args:(c274dd88 421db752    0    0) 
+
+Update message task: mid-1
+old logMu: (-16.353151, 9.672564)
+new logMu: (-61.216339, 39.429024)
+delta logMu: (-44.863190, 29.756460)
+propagate
+	Enq Task ts:fffffffa ttype: 2 locale:     0 args:(c23373e8 41ee0d3b    0    0)
+	Enq Task ts:fffffffa ttype: 2 locale:     2 args:(c23373e8 41ee0d3b    0    0)
+
+Deq Task ts:fffffff9 ttype: 3 locale:     4 args:(c279a7ac 4220f212    0    0) 
+
+Update message task: mid-4
+old logMu: (-15.352271, 9.014745)
+new logMu: (-62.413742, 40.236397)
+delta logMu: (-47.061470, 31.221653)
+propagate
+	Enq Task ts:fffffffa ttype: 2 locale:     5 args:(c23c3ef2 41f9c5f2    0    0)
+	Enq Task ts:fffffffa ttype: 2 locale:     7 args:(c23c3ef2 41f9c5f2    0    0)
+
+Deq Task ts:fffffff9 ttype: 3 locale:     3 args:(c227fd5a 41d5ce85    0    0) 
+
+Update message task: mid-3
+aborted, not most up-to-date copy
+Deq Task ts:fffffffa ttype: 2 locale:     0 args:(c23c3ef4 41f9c5f3    0    0) 
+
+Reprioritize task: mid-0, deltaLogMu: (-47.061478, 31.221655)
+old lookAhead: (-30.748859, 19.234337)
+new lookAhead: (-77.810333, 50.455994)
+residual: 8180118812673934622720.000000
+	Enq Task ts:fffffffb ttype: 3 locale:     0 args:(c29b9ee4 4249d2f0    0    0)
+
+Deq Task ts:fffffffa ttype: 2 locale:     0 args:(c23373e8 41ee0d3b    0    0) 
+
+Reprioritize task: mid-0, deltaLogMu: (-44.863190, 29.756460)
+old lookAhead: (-77.810333, 50.455994)
+new lookAhead: (-122.673523, 80.212456)
+residual: 68521506316574197804165201519443968.000000
+	Enq Task ts:fffffffb ttype: 3 locale:     0 args:(c2f558d8 42a06cc7    0    0)
+
+Deq Task ts:fffffffa ttype: 2 locale:     7 args:(c23c3ef2 41f9c5f2    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-47.061470, 31.221653)
+old lookAhead: (-31.129326, 19.471188)
+new lookAhead: (-78.190796, 50.692841)
+residual: 10366232499894077095936.000000
+	Enq Task ts:fffffffb ttype: 3 locale:     7 args:(c29c61b0 424ac578    0    0)
+
+Deq Task ts:fffffffa ttype: 2 locale:     5 args:(c23c3ef2 41f9c5f2    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-47.061470, 31.221653)
+old lookAhead: (-31.218426, 19.557562)
+new lookAhead: (-78.279892, 50.779213)
+residual: 11301392577618585321472.000000
+	Enq Task ts:fffffffb ttype: 3 locale:     5 args:(c29c8f4e 424b1dea    0    0)
+
+Deq Task ts:fffffffa ttype: 2 locale:     5 args:(c23373e8 41ee0d3c    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-44.863190, 29.756462)
+old lookAhead: (-78.279892, 50.779213)
+new lookAhead: (-123.143082, 80.535675)
+residual: 94667146569492429116511676885106688.000000
+	Enq Task ts:fffffffb ttype: 3 locale:     5 args:(c2f64942 42a11244    0    0)
+
+Deq Task ts:fffffffa ttype: 2 locale:     2 args:(c23c3ef4 41f9c5f3    0    0) 
+
+Reprioritize task: mid-2, deltaLogMu: (-47.061478, 31.221655)
+old lookAhead: (-31.288589, 19.613356)
+new lookAhead: (-78.350067, 50.835011)
+residual: 11949907546260216217600.000000
+	Enq Task ts:fffffffb ttype: 3 locale:     2 args:(c29cb33c 424b570d    0    0)
+
+Deq Task ts:fffffffa ttype: 2 locale:     2 args:(c23373e8 41ee0d3b    0    0) 
+
+Reprioritize task: mid-2, deltaLogMu: (-44.863190, 29.756460)
+old lookAhead: (-78.350067, 50.835011)
+new lookAhead: (-123.213257, 80.591469)
+residual: 100099108619632906366262643664093184.000000
+	Enq Task ts:fffffffb ttype: 3 locale:     2 args:(c2f66d30 42a12ed5    0    0)
+
+Deq Task ts:fffffffa ttype: 2 locale:     7 args:(c23373e8 41ee0d3c    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-44.863190, 29.756462)
+old lookAhead: (-78.190796, 50.692841)
+new lookAhead: (-123.053986, 80.449303)
+residual: 86833679878341456963878401041498112.000000
+	Enq Task ts:fffffffb ttype: 3 locale:     7 args:(c2f61ba4 42a0e60b    0    0)
+
+Deq Task ts:fffffffb ttype: 3 locale:     0 args:(c29b9ee4 4249d2f0    0    0) 
+
+Update message task: mid-0
+aborted, not most up-to-date copy
+Deq Task ts:fffffffb ttype: 3 locale:     7 args:(c29c61b0 424ac578    0    0) 
+
+Update message task: mid-7
+aborted, not most up-to-date copy
+Deq Task ts:fffffffb ttype: 3 locale:     2 args:(c2f66d30 42a12ed5    0    0) 
+
+Update message task: mid-2
+old logMu: (-31.288589, 19.613356)
+new logMu: (-123.213257, 80.591469)
+delta logMu: (-91.924667, 60.978111)
+propagate
+	Enq Task ts:fffffffc ttype: 2 locale:     4 args:(c2b7d96e 4273e996    0    0)
+	Enq Task ts:fffffffc ttype: 2 locale:     3 args:(c2b7d96e 4273e996    0    0)
+
+Deq Task ts:fffffffb ttype: 3 locale:     0 args:(c2f558d8 42a06cc7    0    0) 
+
+Update message task: mid-0
+old logMu: (-30.748859, 19.234337)
+new logMu: (-122.673523, 80.212456)
+delta logMu: (-91.924667, 60.978119)
+propagate
+	Enq Task ts:fffffffc ttype: 2 locale:     6 args:(c2b7d96e 4273e998    0    0)
+	Enq Task ts:fffffffc ttype: 2 locale:     1 args:(c2b7d96e 4273e998    0    0)
+
+Deq Task ts:fffffffb ttype: 3 locale:     7 args:(c2f61ba4 42a0e60b    0    0) 
+
+Update message task: mid-7
+old logMu: (-31.129326, 19.471188)
+new logMu: (-123.053986, 80.449303)
+delta logMu: (-91.924660, 60.978115)
+propagate
+	Enq Task ts:fffffffc ttype: 2 locale:     6 args:(c2b7d96d 4273e997    0    0)
+	Enq Task ts:fffffffc ttype: 2 locale:     1 args:(c2b7d96d 4273e997    0    0)
+
+Deq Task ts:fffffffb ttype: 3 locale:     5 args:(c29c8f4e 424b1dea    0    0) 
+
+Update message task: mid-5
+aborted, not most up-to-date copy
+Deq Task ts:fffffffb ttype: 3 locale:     2 args:(c29cb33c 424b570d    0    0) 
+
+Update message task: mid-2
+aborted, not most up-to-date copy
+Deq Task ts:fffffffb ttype: 3 locale:     5 args:(c2f64942 42a11244    0    0) 
+
+Update message task: mid-5
+old logMu: (-31.218426, 19.557562)
+new logMu: (-123.143082, 80.535675)
+delta logMu: (-91.924652, 60.978111)
+propagate
+	Enq Task ts:fffffffc ttype: 2 locale:     4 args:(c2b7d96c 4273e996    0    0)
+	Enq Task ts:fffffffc ttype: 2 locale:     3 args:(c2b7d96c 4273e996    0    0)
+
+Deq Task ts:fffffffc ttype: 2 locale:     4 args:(c2b7d96e 4273e996    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-91.924667, 60.978111)
+old lookAhead: (-62.413742, 40.236397)
+new lookAhead: (-154.338409, 101.214508)
+residual: inf
+	Enq Task ts:fffffffd ttype: 3 locale:     4 args:(c31a56a2 42ca6dd4    0    0)
+
+Deq Task ts:fffffffc ttype: 2 locale:     3 args:(c2b7d96e 4273e996    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-91.924667, 60.978111)
+old lookAhead: (-62.198967, 40.141403)
+new lookAhead: (-154.123627, 101.119514)
+residual: inf
+	Enq Task ts:fffffffd ttype: 3 locale:     3 args:(c31a1fa6 42ca3d31    0    0)
+
+Deq Task ts:fffffffc ttype: 2 locale:     4 args:(c2b7d96c 4273e996    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-91.924652, 60.978111)
+old lookAhead: (-154.338409, 101.214508)
+new lookAhead: (-246.263062, 162.192627)
+residual: inf
+	Enq Task ts:fffffffd ttype: 3 locale:     4 args:(c3764358 43223150    0    0)
+
+Deq Task ts:fffffffc ttype: 2 locale:     3 args:(c2b7d96c 4273e996    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-91.924652, 60.978111)
+old lookAhead: (-154.123627, 101.119514)
+new lookAhead: (-246.048279, 162.097626)
+residual: inf
+	Enq Task ts:fffffffd ttype: 3 locale:     3 args:(c3760c5c 432218fe    0    0)
+
+Deq Task ts:fffffffc ttype: 2 locale:     6 args:(c2b7d96e 4273e998    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-91.924667, 60.978119)
+old lookAhead: (-61.361317, 39.548485)
+new lookAhead: (-153.285980, 100.526604)
+residual: inf
+	Enq Task ts:fffffffd ttype: 3 locale:     6 args:(c3194936 42c90d9f    0    0)
+
+Deq Task ts:fffffffc ttype: 2 locale:     1 args:(c2b7d96e 4273e998    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-91.924667, 60.978119)
+old lookAhead: (-61.216339, 39.429024)
+new lookAhead: (-153.141006, 100.407143)
+residual: inf
+	Enq Task ts:fffffffd ttype: 3 locale:     1 args:(c3192419 42c8d075    0    0)
+
+Deq Task ts:fffffffc ttype: 2 locale:     1 args:(c2b7d96d 4273e997    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-91.924660, 60.978115)
+old lookAhead: (-153.141006, 100.407143)
+new lookAhead: (-245.065674, 161.385254)
+residual: inf
+	Enq Task ts:fffffffd ttype: 3 locale:     1 args:(c37510d0 432162a0    0    0)
+
+Deq Task ts:fffffffc ttype: 2 locale:     6 args:(c2b7d96d 4273e997    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-91.924660, 60.978115)
+old lookAhead: (-153.285980, 100.526604)
+new lookAhead: (-245.210632, 161.504715)
+residual: inf
+	Enq Task ts:fffffffd ttype: 3 locale:     6 args:(c37535ec 43218135    0    0)
+
+Deq Task ts:fffffffd ttype: 3 locale:     4 args:(c31a56a2 42ca6dd4    0    0) 
+
+Update message task: mid-4
+aborted, not most up-to-date copy
+Deq Task ts:fffffffd ttype: 3 locale:     4 args:(c3764358 43223150    0    0) 
+
+Update message task: mid-4
+old logMu: (-62.413742, 40.236397)
+new logMu: (-246.263062, 162.192627)
+delta logMu: (-183.849319, 121.956230)
+propagate
+	Enq Task ts:fffffffe ttype: 2 locale:     5 args:(c337d96d 42f3e997    0    0)
+	Enq Task ts:fffffffe ttype: 2 locale:     7 args:(c337d96d 42f3e997    0    0)
+
+Deq Task ts:fffffffd ttype: 3 locale:     1 args:(c37510d0 432162a0    0    0) 
+
+Update message task: mid-1
+old logMu: (-61.216339, 39.429024)
+new logMu: (-245.065674, 161.385254)
+delta logMu: (-183.849335, 121.956230)
+propagate
+	Enq Task ts:fffffffe ttype: 2 locale:     0 args:(c337d96e 42f3e997    0    0)
+	Enq Task ts:fffffffe ttype: 2 locale:     2 args:(c337d96e 42f3e997    0    0)
+
+Deq Task ts:fffffffd ttype: 3 locale:     3 args:(c31a1fa6 42ca3d31    0    0) 
+
+Update message task: mid-3
+aborted, not most up-to-date copy
+Deq Task ts:fffffffd ttype: 3 locale:     6 args:(c37535ec 43218135    0    0) 
+
+Update message task: mid-6
+old logMu: (-61.361317, 39.548485)
+new logMu: (-245.210632, 161.504715)
+delta logMu: (-183.849319, 121.956230)
+propagate
+	Enq Task ts:fffffffe ttype: 2 locale:     5 args:(c337d96d 42f3e997    0    0)
+	Enq Task ts:fffffffe ttype: 2 locale:     7 args:(c337d96d 42f3e997    0    0)
+
+Deq Task ts:fffffffd ttype: 3 locale:     3 args:(c3760c5c 432218fe    0    0) 
+
+Update message task: mid-3
+old logMu: (-62.198967, 40.141403)
+new logMu: (-246.048279, 162.097626)
+delta logMu: (-183.849304, 121.956223)
+propagate
+	Enq Task ts:fffffffe ttype: 2 locale:     0 args:(c337d96c 42f3e996    0    0)
+	Enq Task ts:fffffffe ttype: 2 locale:     2 args:(c337d96c 42f3e996    0    0)
+
+Deq Task ts:fffffffd ttype: 3 locale:     1 args:(c3192419 42c8d075    0    0) 
+
+Update message task: mid-1
+aborted, not most up-to-date copy
+Deq Task ts:fffffffd ttype: 3 locale:     6 args:(c3194936 42c90d9f    0    0) 
+
+Update message task: mid-6
+aborted, not most up-to-date copy
+Deq Task ts:fffffffe ttype: 2 locale:     5 args:(c337d96d 42f3e997    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-183.849319, 121.956230)
+old lookAhead: (-123.143082, 80.535675)
+new lookAhead: (-306.992401, 202.491913)
+residual: inf
+	Enq Task ts:ffffffff ttype: 3 locale:     5 args:(c3997f07 434a7dee    0    0)
+
+Deq Task ts:fffffffe ttype: 2 locale:     2 args:(c337d96e 42f3e997    0    0) 
+
+Reprioritize task: mid-2, deltaLogMu: (-183.849335, 121.956230)
+old lookAhead: (-123.213257, 80.591469)
+new lookAhead: (-307.062592, 202.547699)
+residual: inf
+	Enq Task ts:ffffffff ttype: 3 locale:     2 args:(c3998803 434a8c36    0    0)
+
+Deq Task ts:fffffffe ttype: 2 locale:     0 args:(c337d96c 42f3e996    0    0) 
+
+Reprioritize task: mid-0, deltaLogMu: (-183.849304, 121.956223)
+old lookAhead: (-122.673523, 80.212456)
+new lookAhead: (-306.522827, 202.168671)
+residual: inf
+	Enq Task ts:ffffffff ttype: 3 locale:     0 args:(c39942ec 434a2b2e    0    0)
+
+Deq Task ts:fffffffe ttype: 2 locale:     7 args:(c337d96d 42f3e997    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-183.849319, 121.956230)
+old lookAhead: (-123.053986, 80.449303)
+new lookAhead: (-306.903320, 202.405533)
+residual: inf
+	Enq Task ts:ffffffff ttype: 3 locale:     7 args:(c39973a0 434a67d1    0    0)
+
+Deq Task ts:fffffffe ttype: 2 locale:     7 args:(c337d96d 42f3e997    0    0) 
+
+Reprioritize task: mid-7, deltaLogMu: (-183.849319, 121.956230)
+old lookAhead: (-306.903320, 202.405533)
+new lookAhead: (-490.752625, 324.361755)
+residual: inf
+	Enq Task ts:ffffffff ttype: 3 locale:     7 args:(c3f56056 43a22e4e    0    0)
+
+Deq Task ts:fffffffe ttype: 2 locale:     0 args:(c337d96e 42f3e997    0    0) 
+
+Reprioritize task: mid-0, deltaLogMu: (-183.849335, 121.956230)
+old lookAhead: (-306.522827, 202.168671)
+new lookAhead: (-490.372162, 324.124908)
+residual: inf
+	Enq Task ts:ffffffff ttype: 3 locale:     0 args:(c3f52fa3 43a20ffd    0    0)
+
+Deq Task ts:fffffffe ttype: 2 locale:     2 args:(c337d96c 42f3e996    0    0) 
+
+Reprioritize task: mid-2, deltaLogMu: (-183.849304, 121.956223)
+old lookAhead: (-307.062592, 202.547699)
+new lookAhead: (-490.911896, 324.503906)
+residual: inf
+	Enq Task ts:ffffffff ttype: 3 locale:     2 args:(c3f574b9 43a24080    0    0)
+
+Deq Task ts:fffffffe ttype: 2 locale:     5 args:(c337d96d 42f3e997    0    0) 
+
+Reprioritize task: mid-5, deltaLogMu: (-183.849319, 121.956230)
+old lookAhead: (-306.992401, 202.491913)
+new lookAhead: (-490.841736, 324.448151)
+residual: inf
+	Enq Task ts:ffffffff ttype: 3 locale:     5 args:(c3f56bbe 43a2395d    0    0)
+
+Deq Task ts:ffffffff ttype: 3 locale:     5 args:(c3997f07 434a7dee    0    0) 
+
+Update message task: mid-5
+aborted, not most up-to-date copy
+Deq Task ts:ffffffff ttype: 3 locale:     0 args:(c39942ec 434a2b2e    0    0) 
+
+Update message task: mid-0
+aborted, not most up-to-date copy
+Deq Task ts:ffffffff ttype: 3 locale:     2 args:(c3f574b9 43a24080    0    0) 
+
+Update message task: mid-2
+old logMu: (-123.213257, 80.591469)
+new logMu: (-490.911896, 324.503906)
+delta logMu: (-367.698639, 243.912445)
+propagate
+	Enq Task ts:   0 ttype: 2 locale:     4 args:(c3b7d96d 4373e996    0    0)
+	Enq Task ts:   0 ttype: 2 locale:     3 args:(c3b7d96d 4373e996    0    0)
+
+Deq Task ts:   0 ttype: 2 locale:     4 args:(c3b7d96d 4373e996    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-367.698639, 243.912445)
+old lookAhead: (-246.263062, 162.192627)
+new lookAhead: (-613.961670, 406.105072)
+residual: -nan
+residual < sensitivity, no update
+
+Deq Task ts:   0 ttype: 2 locale:     3 args:(c3b7d96d 4373e996    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-367.698639, 243.912445)
+old lookAhead: (-246.048279, 162.097626)
+new lookAhead: (-613.746948, 406.010071)
+residual: -nan
+residual < sensitivity, no update
+
+Deq Task ts:ffffffff ttype: 3 locale:     5 args:(c3f56bbe 43a2395d    0    0) 
+
+Update message task: mid-5
+old logMu: (-123.143082, 80.535675)
+new logMu: (-490.841736, 324.448151)
+delta logMu: (-367.698669, 243.912476)
+propagate
+	Enq Task ts:   0 ttype: 2 locale:     4 args:(c3b7d96e 4373e998    0    0)
+	Enq Task ts:   0 ttype: 2 locale:     3 args:(c3b7d96e 4373e998    0    0)
+
+Deq Task ts:   0 ttype: 2 locale:     4 args:(c3b7d96e 4373e998    0    0) 
+
+Reprioritize task: mid-4, deltaLogMu: (-367.698669, 243.912476)
+old lookAhead: (-613.961670, 406.105072)
+new lookAhead: (-981.660339, 650.017578)
+residual: -nan
+residual < sensitivity, no update
+
+Deq Task ts:   0 ttype: 2 locale:     3 args:(c3b7d96e 4373e998    0    0) 
+
+Reprioritize task: mid-3, deltaLogMu: (-367.698669, 243.912476)
+old lookAhead: (-613.746948, 406.010071)
+new lookAhead: (-981.445618, 649.922546)
+residual: -nan
+residual < sensitivity, no update
+
+Deq Task ts:ffffffff ttype: 3 locale:     0 args:(c3f52fa3 43a20ffd    0    0) 
+
+Update message task: mid-0
+old logMu: (-122.673523, 80.212456)
+new logMu: (-490.372162, 324.124908)
+delta logMu: (-367.698639, 243.912445)
+propagate
+	Enq Task ts:   0 ttype: 2 locale:     6 args:(c3b7d96d 4373e996    0    0)
+	Enq Task ts:   0 ttype: 2 locale:     1 args:(c3b7d96d 4373e996    0    0)
+
+Deq Task ts:   0 ttype: 2 locale:     6 args:(c3b7d96d 4373e996    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-367.698639, 243.912445)
+old lookAhead: (-245.210632, 161.504715)
+new lookAhead: (-612.909302, 405.417175)
+residual: -nan
+residual < sensitivity, no update
+
+Deq Task ts:   0 ttype: 2 locale:     1 args:(c3b7d96d 4373e996    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-367.698639, 243.912445)
+old lookAhead: (-245.065674, 161.385254)
+new lookAhead: (-612.764282, 405.297699)
+residual: -nan
+residual < sensitivity, no update
+
+Deq Task ts:ffffffff ttype: 3 locale:     7 args:(c3f56056 43a22e4e    0    0) 
+
+Update message task: mid-7
+old logMu: (-123.053986, 80.449303)
+new logMu: (-490.752625, 324.361755)
+delta logMu: (-367.698639, 243.912445)
+propagate
+	Enq Task ts:   0 ttype: 2 locale:     6 args:(c3b7d96d 4373e996    0    0)
+	Enq Task ts:   0 ttype: 2 locale:     1 args:(c3b7d96d 4373e996    0    0)
+
+Deq Task ts:   0 ttype: 2 locale:     6 args:(c3b7d96d 4373e996    0    0) 
+
+Reprioritize task: mid-6, deltaLogMu: (-367.698639, 243.912445)
+old lookAhead: (-612.909302, 405.417175)
+new lookAhead: (-980.607910, 649.329590)
+residual: -nan
+residual < sensitivity, no update
+
+Deq Task ts:   0 ttype: 2 locale:     1 args:(c3b7d96d 4373e996    0    0) 
+
+Reprioritize task: mid-1, deltaLogMu: (-367.698639, 243.912445)
+old lookAhead: (-612.764282, 405.297699)
+new lookAhead: (-980.462891, 649.210144)
+residual: -nan
+residual < sensitivity, no update
+
+Deq Task ts:ffffffff ttype: 3 locale:     7 args:(c39973a0 434a67d1    0    0) 
+
+Update message task: mid-7
+aborted, not most up-to-date copy
+Deq Task ts:ffffffff ttype: 3 locale:     2 args:(c3998803 434a8c36    0    0) 
+
+Update message task: mid-2
+aborted, not most up-to-date copy
+
+Graph after
+
+edge_indices: 0 2 3 4 0 
+edge_dest: 2 1 3 3 
+reverse_edge_indices: 0 0 1 2 4 
+reverse_edge_dest: 0 0 1 2 
+reverse_edge_id: 1 0 2 3 
+Message 0: (0, 2) = (-490.372162, 324.124908)
+Message 1: (2, 0) = (-245.065674, 161.385254)
+Message 2: (0, 1) = (-490.911896, 324.503906)
+Message 3: (1, 0) = (-246.048279, 162.097626)
+Message 4: (1, 3) = (-246.263062, 162.192627)
+Message 5: (3, 1) = (-490.841736, 324.448151)
+Message 6: (2, 3) = (-245.210632, 161.504715)
+Message 7: (3, 2) = (-490.752625, 324.361755)
+
+Converged Message 0: (0, 2) = (-0.656335, -0.731366)
+Converged Message 1: (2, 0) = (-0.727150, -0.660262)
+Converged Message 2: (0, 1) = (-1.172318, -0.370554)
+Converged Message 3: (1, 0) = (-1.100586, -0.404479)
+Converged Message 4: (1, 3) = (-0.958371, -0.483725)
+Converged Message 5: (3, 1) = (-0.644183, -0.744632)
+Converged Message 6: (2, 3) = (-0.857337, -0.552153)
+Converged Message 7: (3, 2) = (-0.747228, -0.641842)
+
