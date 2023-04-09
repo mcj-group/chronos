@@ -2,6 +2,7 @@
  * Created by vaksenov on 23.07.2019.
  * Ported to C++ by Mark Jeffrey 2021.04.27
  */
+#pragma once
 #include <array>
 #include <cmath>
 #include <cstdint>
@@ -87,6 +88,8 @@ class MRF_CSR {
 		};
 
 		std::array<float_t,2> getFutureMessageVal(message_id m);
+
+		std::array<float_t,2> updateLookAhead(message_id m);
 
 		void updateMessage(message_id m_id, std::array<float_t,2> newLogMu) {
 			node_id dest = getDest(m_id);

@@ -30,5 +30,5 @@ $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 clean:
-	rm -f *.o $(BIN)
+	rm -f *.o $(BIN) *.rbp output-*
 

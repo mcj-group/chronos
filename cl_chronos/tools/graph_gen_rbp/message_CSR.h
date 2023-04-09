@@ -12,5 +12,7 @@ struct Message {
     uint32_t j;
 
     std::array<float_t,2> logMu;
-    std::array<float_t,2> lookAhead; 
+    std::array<float_t,2> lookAhead;
+
+    std::array<std::array<float_t,2>,2> logsIn;
 };

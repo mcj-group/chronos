@@ -146,7 +146,7 @@ SECTIONS
   .dynamic        : { *(.dynamic) }
   . = DATA_SEGMENT_RELRO_END (0, .);
   /* Push data and bss out of read-only region (80-c0) */
-  . = 0xc0000400;
+  . = 0xc0000000;
   .data           :
   {
     __global_pointer$ = . + 0x800;

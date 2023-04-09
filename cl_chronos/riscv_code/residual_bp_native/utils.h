@@ -36,3 +36,11 @@ static inline float_t logSum(float_t log1, float_t log2) {
    printf("logSum(%f, %f) = %f\n", log1, log2, ans);
    return ans;
 }
+
+uint32_t getReverseMessage(uint32_t m) {
+   if ((m % 2) == 0) {
+      return m + 1;
+   } else {
+      return m - 1;
+   }
+}

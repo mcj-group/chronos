@@ -155,3 +155,45 @@ std::array<float_t,2> MRF_CSR::getFutureMessageVal(message_id m_id){
 
     return result;
 }
+
+std::array<float_t,2> MRF_CSR::updateLookAhead(message_id m_id){
+    Message &m = messages[m_id];
+    Edge &e = edges[m_id/2];
+
+    uint32_t i = m.i;
+    Node &n = nodes[i];
+
+    uint32_t r_m_id = getReverseMessage(m_id);
+
+    //find reverse message
+    Message &r_m = messages[r_m_id];
+
+    bool forward;
+    if (m_id % 2 == 0) {
+        forward = true;
+    } else {
+        forward = false;
+    }
+
+    std::array<float_t,2> result;
+    for (uint32_t valj = 0; valj < 2; valj++) {
+        for (uint32_t vali = 0; vali < 2; vali++) {
+            m.logsIn[valj][vali] = e.getLogPotential(forward, vali, valj)
+                    + n.logNodePotentials[vali]
+                    + (n.logProductIn[vali] - r_m.logMu[vali]);
+        }
+        result[valj] = utils::logSum(m.logsIn[valj]);
+    }
+    float_t logTotalSum = utils::logSum(result);
+
+    // normalization
+    for (uint32_t valj = 0; valj < 2; valj++) {
+        result[valj] -= logTotalSum;
+    }
+
+    // update lookAhead
+    m.lookAhead[0] = result[0];
+    m.lookAhead[1] = result[1];
+
+    return result;
+}

@@ -10,6 +10,7 @@
 #include "examples_mrf_CSR.h"
 #include "mrf_CSR.h"
 #include "residual_bp_CSR.h"
+#include "node_CSR.h"
 
 #include "edge_CSR.h"
 #include "message_CSR.h"
@@ -32,8 +33,10 @@ void WriteOutput(FILE* fp) {
     uint32_t SIZE_REVERSE_EDGE_INDICES = (numV + 1 + 15)/16 * 16;
     uint32_t SIZE_REVERSE_EDGE_DEST = (numE + 15)/16 * 16;
     uint32_t SIZE_REVERSE_EDGE_ID = (numE + 15)/16 * 16;
-    uint32_t SIZE_MESSAGES = (2 * numE * 8 + 15)/16 * 16;
-    uint32_t SIZE_CONVERGED = (2 * numE * 8 + 15)/16 * 16;
+    uint32_t SIZE_MESSAGES = (2 * numE * 16 + 15)/16 * 16;
+    uint32_t SIZE_CONVERGED = (2 * numE * 16 + 15)/16 * 16;
+    uint32_t SIZE_NODES = (numV * 4 + 15)/16 * 16;
+    uint32_t SIZE_EDGES = (numE * 4 + 15)/16 * 16;
 
     uint32_t BASE_EDGE_INDICES = 16;
     uint32_t BASE_EDGE_DEST = BASE_EDGE_INDICES + SIZE_EDGE_INDICES;
@@ -42,8 +45,10 @@ void WriteOutput(FILE* fp) {
     uint32_t BASE_REVERSE_EDGE_ID = BASE_REVERSE_EDGE_DEST + SIZE_REVERSE_EDGE_DEST;
     uint32_t BASE_MESSAGES = BASE_REVERSE_EDGE_ID + SIZE_REVERSE_EDGE_ID;
     uint32_t BASE_CONVERGED = BASE_MESSAGES + SIZE_MESSAGES;
+    uint32_t BASE_NODES = BASE_CONVERGED + SIZE_CONVERGED;
+    uint32_t BASE_EDGES = BASE_NODES + SIZE_NODES;
 
-	uint32_t BASE_END = BASE_CONVERGED + SIZE_CONVERGED;
+	uint32_t BASE_END = BASE_EDGES + SIZE_EDGES;
 
 	uint32_t* data = (uint32_t*) calloc(BASE_END, sizeof(uint32_t));
 
@@ -57,15 +62,17 @@ void WriteOutput(FILE* fp) {
 	data[7] = BASE_REVERSE_EDGE_ID;
 	data[8] = BASE_MESSAGES;
     data[9] = BASE_CONVERGED;
-	data[10] = *((uint32_t *) &sensitivity);
-	data[11] = BASE_END;
+    data[10] = BASE_NODES;
+    data[11] = BASE_EDGES;
+	data[12] = *((uint32_t *) &sensitivity);
+	data[13] = BASE_END;
 
     printf("header %d: 0x%4x\n", 0, data[0]);
-	for (uint32_t i = 1; i < 10; i++) {
+	for (uint32_t i = 1; i < 12; i++) {
 		printf("header %d: %d\n", i, data[i]);
 	}
-    printf("header %d: %f\n", 10, *((float_t *) &data[10]));
-    printf("header %d: %d\n", 11, data[11]);
+    printf("header %d: %f\n", 12, *((float_t *) &data[12]));
+    printf("header %d: %d\n", 13, data[13]);
 
     for (uint32_t i = 0; i < numV + 1; i++) {
         data[BASE_EDGE_INDICES + i] = mrf->edge_indices[i];
@@ -73,8 +80,6 @@ void WriteOutput(FILE* fp) {
 
     for (uint32_t i = 0; i < numE; i++) {
         data[BASE_EDGE_DEST + i] = mrf->edge_dest[i];
-        // printf("%8x\n", data[BASE_EDGE_DEST + i]);
-        // printf("%8x\n\n", (BASE_EDGE_DEST + i)*8);
     }
 
     for (uint32_t i = 0; i < numV + 1; i++) {
@@ -92,24 +97,84 @@ void WriteOutput(FILE* fp) {
         assert((BASE_REVERSE_EDGE_ID + i) < BASE_END);
     }
 
-    for (uint32_t i = 0; i < 2 * numE * 8; i+=8) {
-        data[BASE_MESSAGES + i]  = (mrf->messages[i/8]).i;
-        data[BASE_MESSAGES + i + 1]  = (mrf->messages[i/8]).j;
-        data[BASE_MESSAGES + i + 2]  = *(uint32_t *) &((mrf->messages[i/8]).logMu[0]);
-        data[BASE_MESSAGES + i + 3]  = *(uint32_t *) &((mrf->messages[i/8]).logMu[1]);
-        data[BASE_MESSAGES + i + 4]  = *(uint32_t *) &((mrf->messages[i/8]).lookAhead[0]);
-        data[BASE_MESSAGES + i + 5]  = *(uint32_t *) &((mrf->messages[i/8]).lookAhead[1]);
-        assert((BASE_MESSAGES + i + 7) < BASE_END);
+    for (uint32_t i = 0; i < 2 * numE; i++) {
+        // message values
+        data[BASE_MESSAGES + i * 16]  = *(uint32_t *) &((mrf->messages[i]).logMu[0]);
+        data[BASE_MESSAGES + i * 16 + 1]  = *(uint32_t *) &((mrf->messages[i]).logMu[1]);
+
+        // placeholder for logProductIn buffer
+        data[BASE_MESSAGES + i * 16 + 2]  = 0;
+        data[BASE_MESSAGES + i * 16 + 3]  = 0;
+
+        // placeholder for reverseLogMu buffer
+        data[BASE_MESSAGES + i * 16 + 4]  = 0;
+        data[BASE_MESSAGES + i * 16 + 5]  = 0;
+
+        // src and dest nodes
+        data[BASE_MESSAGES + i * 16 + 6]  = (mrf->messages[i]).i;
+        data[BASE_MESSAGES + i * 16 + 7]  = (mrf->messages[i]).j;
+
+        // placeholder for enqueued_ts
+        data[BASE_MESSAGES + i * 16 + 8]  = 0;
+
+        // padding
+        data[BASE_MESSAGES + i * 16 + 9]  = 0;
+        data[BASE_MESSAGES + i * 16 + 10]  = 0;
+        data[BASE_MESSAGES + i * 16 + 11]  = 0;
+        data[BASE_MESSAGES + i * 16 + 12]  = 0;
+        data[BASE_MESSAGES + i * 16 + 13]  = 0;
+        data[BASE_MESSAGES + i * 16 + 14]  = 0;
+        data[BASE_MESSAGES + i * 16 + 15]  = 0;
+
+        assert((BASE_MESSAGES + i * 16 + 15) < BASE_END);
     }
 
-    for (uint32_t i = 0; i < 2 * numE * 8; i+=8) {
-        data[BASE_CONVERGED + i]  = (mrf_sol->messages[i/8]).i;
-        data[BASE_CONVERGED + i + 1]  = (mrf_sol->messages[i/8]).j;
-        data[BASE_CONVERGED + i + 2]  = *(uint32_t *) &((mrf_sol->messages[i/8]).logMu[0]);
-        data[BASE_CONVERGED + i + 3]  = *(uint32_t *) &((mrf_sol->messages[i/8]).logMu[1]);
-        data[BASE_CONVERGED + i + 4]  = *(uint32_t *) &((mrf_sol->messages[i/8]).lookAhead[0]);
-        data[BASE_CONVERGED + i + 5]  = *(uint32_t *) &((mrf_sol->messages[i/8]).lookAhead[1]);
-        assert((BASE_CONVERGED + i + 7) < BASE_END);
+    for (uint32_t i = 0; i < 2 * numE; i++) {
+        // message values
+        data[BASE_CONVERGED + i * 16]  = *(uint32_t *) &((mrf_sol->messages[i]).logMu[0]);
+        data[BASE_CONVERGED + i * 16 + 1]  = *(uint32_t *) &((mrf_sol->messages[i]).logMu[1]);
+
+        // placeholder for logProductIn buffer
+        data[BASE_CONVERGED + i * 16 + 2]  = 0;
+        data[BASE_CONVERGED + i * 16 + 3]  = 0;
+
+        // placeholder for reverseLogMu buffer
+        data[BASE_CONVERGED + i * 16 + 4]  = 0;
+        data[BASE_CONVERGED + i * 16 + 5]  = 0;
+
+        // src and dest nodes
+        data[BASE_CONVERGED + i * 16 + 6]  = (mrf_sol->messages[i]).i;
+        data[BASE_CONVERGED + i * 16 + 7]  = (mrf_sol->messages[i]).j;
+
+        // placeholder for enqueued_ts
+        data[BASE_CONVERGED + i * 16 + 8]  = 0;
+
+        // padding
+        data[BASE_CONVERGED + i * 16 + 9]  = 0;
+        data[BASE_CONVERGED + i * 16 + 10]  = 0;
+        data[BASE_CONVERGED + i * 16 + 11]  = 0;
+        data[BASE_CONVERGED + i * 16 + 12]  = 0;
+        data[BASE_CONVERGED + i * 16 + 13]  = 0;
+        data[BASE_CONVERGED + i * 16 + 14]  = 0;
+        data[BASE_CONVERGED + i * 16 + 15]  = 0;
+
+        assert((BASE_CONVERGED + i * 16 + 15) < BASE_END);
+    }
+
+    for (uint32_t i = 0; i < numV; i++) {
+        data[BASE_NODES + i * 4] = *(uint32_t *) &((mrf->nodes[i]).logNodePotentials[0]);
+        data[BASE_NODES + i * 4 + 1] = *(uint32_t *) &((mrf->nodes[i]).logNodePotentials[1]);
+        data[BASE_NODES + i * 4 + 2] = *(uint32_t *) &((mrf->nodes[i]).logProductIn[0]);
+        data[BASE_NODES + i * 4 + 3] = *(uint32_t *) &((mrf->nodes[i]).logProductIn[1]);
+        assert((BASE_NODES + i * 4 + 3) < BASE_END);
+    }
+
+    for (uint32_t i = 0; i < numE; i++) {
+        data[BASE_EDGES + i * 4] = *(uint32_t *) &((mrf->edges[i]).logPotentials[0][0]);
+        data[BASE_EDGES + i * 4 + 1] = *(uint32_t *) &((mrf->edges[i]).logPotentials[0][1]);
+        data[BASE_EDGES + i * 4 + 2] = *(uint32_t *) &((mrf->edges[i]).logPotentials[1][0]);
+        data[BASE_EDGES + i * 4 + 3] = *(uint32_t *) &((mrf->edges[i]).logPotentials[1][1]);
+        assert((BASE_EDGES + i * 4 + 3) < BASE_END);
     }
 
 	printf("Writing file \n");
