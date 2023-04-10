@@ -42,7 +42,7 @@ logic [63:0] log_start_addr;
 logic [511:0] log_entry;
 
 logic [31:0] ocl_addr, ocl_data; 
-logic [31:0] dist_actual, dist_ref;
+logic [31:0] dist_actual, dist_ref, logMu0_actual, logMu1_actual, logMu0_ref, logMu1_ref;
 integer num_errors;
 
 localparam HOST_SPILL_AREA = 32'h1000000;
@@ -83,8 +83,8 @@ initial begin
    case (APP_NAME) 
       "des"     : input_file = "input_net";
       "sssp"    : input_file = "input_graph.sssp";
-      "sssp_fs"    : input_file = "input_graph.sssp_fs";
-      "sssp_hls": input_file = "input_graph.sssp_hls";
+      "sssp_fs"    : input_file = "input_graph.sssp";
+      "sssp_hls": input_file = "input_graph.sssp";
       "residual_bp" : input_file = "input_graph.rbp";
       "astar"   : input_file = "input_astar";
       "color"   : input_file = "input_color";
@@ -143,7 +143,7 @@ initial begin
       task_enq(0, 0, 0, 0, 0, 0);
    end      
    if (APP_NAME == "residual_bp") begin
-      task_enq(0, 1000, 0, 0, 0, 0);
+      task_enq(0, 0, 0, 0, 0, 0);
    end      
     
    //ocl_poke(N_TILES, ID_GLOBAL, MEM_XBAR_RATE_CTRL, {16'h1, 16'd64});
@@ -257,6 +257,32 @@ initial begin
    end
    if (APP_NAME == "silo") begin
        silo_verify();
+   end
+
+   if (APP_NAME == "residual_bp") begin
+      BASE_END = file[13];
+      read_cl_memory( .host_addr(BASE_END*4), .cl_addr(file[8]*4), .len(file[2]*2*16*4));
+      for (int i=0;i<(file[2]*2);i++) begin
+         // logMu0
+         logMu0_actual[ 7: 0] = tb.hm_get_byte( (BASE_END + i)* 4 * 16);
+         logMu0_actual[15: 8] = tb.hm_get_byte( (BASE_END + i)* 4 * 16 + 1);
+         logMu0_actual[23:16] = tb.hm_get_byte( (BASE_END + i)* 4 * 16 + 2);
+         logMu0_actual[31:24] = tb.hm_get_byte( (BASE_END + i)* 4 * 16 + 3);
+         logMu0_ref = file [file[9]+ i * 16];
+
+         // logMu1
+         logMu1_actual[ 7: 0] = tb.hm_get_byte( (BASE_END + i)* 4 * 16 + 4);
+         logMu1_actual[15: 8] = tb.hm_get_byte( (BASE_END + i)* 4 * 16 + 5);
+         logMu1_actual[23:16] = tb.hm_get_byte( (BASE_END + i)* 4 * 16 + 6);
+         logMu1_actual[31:24] = tb.hm_get_byte( (BASE_END + i)* 4 * 16 + 7);
+         logMu1_ref = file [file[9] + i * 16 + 1];
+
+         // Display results
+         $display("mid:%3d message:(%f, %f) ref:(%f, %f)", i, $bitstoshortreal(logMu0_actual), 
+                                                            $bitstoshortreal(logMu1_actual), 
+                                                            $bitstoshortreal(logMu0_ref),
+                                                            $bitstoshortreal(logMu1_ref));
+      end
    end
 
 
