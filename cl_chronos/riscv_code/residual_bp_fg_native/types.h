@@ -1,4 +1,6 @@
-#include "../include/chronos.h"
+#pragma once
+#include "../include/simulator.h"
+
 typedef float float_t;
 
 typedef struct Message {

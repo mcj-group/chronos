@@ -18,13 +18,13 @@ static inline float_t absval(float_t a) {
    }
 }
 
-static inline float_t distance(float_t *log1, float_t *log2) {
-   float_t ans = 0.0;
-   // split each expf into a task use direct cast to int value as id
-   ans += absval(expf(log1[0]) - expf(log2[0]));
-   ans += absval(expf(log1[1]) - expf(log2[1]));
-   return ans;
-}
+// static inline float_t distance(float_t *log1, float_t *log2) {
+//    float_t ans = 0.0;
+//    // split each expf into a task use direct cast to int value as id
+//    ans += absval(expf(log1[0]) - expf(log2[0]));
+//    ans += absval(expf(log1[1]) - expf(log2[1]));
+//    return ans;
+// }
 
 // use direct cast to int of log1 + log2 as id
 static inline float_t logSum(float_t log1, float_t log2) {

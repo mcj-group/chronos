@@ -28,6 +28,7 @@ typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long uint64_t;
 
+const int DUMMY_ADDR = 0x30000000;
 const int ADDR_TASK      = 0xc0000000;
 const int ADDR_TASK_HINT = 0xc0000004;
 const int ADDR_TASK_TTYPE= 0xc0000008;
@@ -42,8 +43,11 @@ const int ADDR_CORE_ID       = 0xc0000064;
 
 typedef unsigned int uint;
 
+extern volatile uint *dummy = (uint *) (DUMMY_ADDR + 0x10000000);
+
 void finish_task() {
    *(volatile int *)( ADDR_FINISH_TASK) = 0;
+   *(volatile int *)( DUMMY_ADDR) = 0; // HACK: flush cache
 }
 
 static inline void chronos_init() {
@@ -83,6 +87,7 @@ void enq_task_arg0(uint ttype, uint ts, uint object){
      *(volatile int *)( ADDR_TASK_HINT) = (object);
      *(volatile int *)( ADDR_TASK_TTYPE) = (ttype);
      *(volatile int *)( ADDR_TASK) = ts;
+     *(volatile int *)( DUMMY_ADDR) = 0; // HACK: flush cache
 }
 void enq_task_arg1(uint ttype, uint ts, uint object, uint arg0){
      *(volatile int *)( ADDR_TASK_ARG) = (arg0);
@@ -102,6 +107,7 @@ void enq_task_arg4(uint ttype, uint ts, uint object, uint arg0, uint arg1, uint 
 }
 
 void deq_task_arg0(uint* ttype, uint* ts, uint* object) {
+      *dummy = *(volatile uint *)(DUMMY_ADDR); // HACK: flush cache
       *ts = *(volatile uint *)(ADDR_TASK);
       *object = *(volatile uint *)(ADDR_TASK_HINT);
       *ttype = *(volatile uint *)(ADDR_TASK_TTYPE);

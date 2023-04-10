@@ -54,7 +54,7 @@ void create_graph_from_file() {
 
 void init_task(uint ts) {
    for (uint32_t i = 0; i < 2 * numE; i++) {
-      enq_task_arg2(PRIORITIZE_TASK, ts + 1, i, 0, 0);
+      enq_task_arg3(PRIORITIZE_TASK, ts + 1, i, 0, 0, 0);
    }
 }
 
@@ -64,9 +64,13 @@ void prioritize_task(uint ts, uint m_id) {
 
    uint32_t r_m_id = getReverseMessage(m_id);
 
-   enq_task_arg2(FETCH_REVERSE_LOGMU_TASK, ts+1, r_m_id, m_id, 0); // reverseLogMu and enqueue write to buffer task
-   enq_task_arg2(FETCH_LOGPRODUCTIN_TASK, ts+1, i + (2 * numE), m_id, 0); // fetch logProductIn and enqueue write to buffer task
-   enq_task_arg2(UPDATE_PRIORITY_TASK, ts+3, m_id, 0, 0); // update lookAhead and enqueue update task
+   enq_task_arg3(FETCH_REVERSE_LOGMU_TASK, ts+1, r_m_id, m_id, 0, 0); // reverseLogMu and enqueue write to buffer task
+   enq_task_arg3(FETCH_LOGPRODUCTIN_TASK, ts+1, i + (2 * numE), m_id, 0, 0); // fetch logProductIn and enqueue write to buffer task
+   enq_task_arg3(UPDATE_PRIORITY_TASK, ts+3, m_id, 0, 0, 0); // update lookAhead and enqueue update task
+
+   // float_t residual = distance(m->logMu, lookAhead);
+   enq_task_arg3(EXP_TASK, ts+1, *(reinterpret_cast<uint*> (&(m->logMu[0]))), m_id, 0, 0);
+   enq_task_arg3(EXP_TASK, ts+1, *(reinterpret_cast<uint*> (&(m->logMu[1]))), m_id, 2, 0);
 }
 
 void fetch_reverse_logmu_task(uint ts, uint r_m_id, uint m_id) {
@@ -78,49 +82,43 @@ void fetch_reverse_logmu_task(uint ts, uint r_m_id, uint m_id) {
    reverseLogMu[1] = r_m->logMu[1];
 
    // enqueue write to buffer task
-   enq_task_arg2(WRITE_REVERSE_LOGMU_TASK, ts+1, m_id, *(reinterpret_cast<uint*> (&reverseLogMu[0])), *(reinterpret_cast<uint*> (&reverseLogMu[1])));
+   enq_task_arg3(WRITE_REVERSE_LOGMU_TASK, ts+1, m_id, *(reinterpret_cast<uint*> (&reverseLogMu[0])), *(reinterpret_cast<uint*> (&reverseLogMu[1])), 0);
 }
 
 void write_reverse_logmu_task(uint ts, uint m_id, uint reverseLogMu0, uint reverseLogMu1) {
-   message_t *m = &messages[m_id];
+   float_t *reverseLogMu = messages[m_id].reverseLogMu;
 
    // undo log write
-   undo_log_write(reinterpret_cast<uint*> (&(m->reverseLogMu[0])), *(reinterpret_cast<uint*> (&(m->reverseLogMu[0]))));
-   undo_log_write(reinterpret_cast<uint*> (&(m->reverseLogMu[1])), *(reinterpret_cast<uint*> (&(m->reverseLogMu[1]))));
+   undo_log_write(reinterpret_cast<uint*> (&(reverseLogMu[0])), *(reinterpret_cast<uint*> (&(reverseLogMu[0]))));
+   undo_log_write(reinterpret_cast<uint*> (&(reverseLogMu[1])), *(reinterpret_cast<uint*> (&(reverseLogMu[1]))));
 
    // update reverseLogMu
-   m->reverseLogMu[0] = *(reinterpret_cast<float_t*> (&reverseLogMu0));
-   m->reverseLogMu[1] = *(reinterpret_cast<float_t*> (&reverseLogMu1));
+   reverseLogMu[0] = *(reinterpret_cast<float_t*> (&reverseLogMu0));
+   reverseLogMu[1] = *(reinterpret_cast<float_t*> (&reverseLogMu1));
 }
 
 void fetch_logproductin_task(uint ts, uint i_id, uint m_id) {
    uint32_t i = i_id - (2 * numE);
 
-   node_t *n = &nodes[i];
-
-   // fetch logProductIn
-   float_t logProductIn[2];
-   logProductIn[0] = n->logProductIn[0];
-   logProductIn[1] = n->logProductIn[1];
+   float_t *logProductIn = nodes[i].logProductIn;
 
    // enqueue write to buffer task
-   enq_task_arg2(WRITE_LOGPRODUCTIN_TASK, ts+1, m_id, *(reinterpret_cast<uint*> (&logProductIn[0])), *(reinterpret_cast<uint*> (&logProductIn[1])));
+   enq_task_arg3(WRITE_LOGPRODUCTIN_TASK, ts+1, m_id, *(reinterpret_cast<uint*> (&logProductIn[0])), *(reinterpret_cast<uint*> (&logProductIn[1])), 0);
 }
 
 void write_logproductin_task(uint ts, uint m_id, uint logProductIn0, uint logProductIn1) {
-   message_t *m = &messages[m_id];
+   float_t *logProductIn = messages[m_id].logProductIn;
 
    // undo log write
-   undo_log_write(reinterpret_cast<uint*> (&(m->logProductIn[0])), *(reinterpret_cast<uint*> (&(m->logProductIn[0]))));
-   undo_log_write(reinterpret_cast<uint*> (&(m->logProductIn[1])), *(reinterpret_cast<uint*> (&(m->logProductIn[1]))));
+   undo_log_write(reinterpret_cast<uint*> (&(logProductIn[0])), *(reinterpret_cast<uint*> (&(logProductIn[0]))));
+   undo_log_write(reinterpret_cast<uint*> (&(logProductIn[1])), *(reinterpret_cast<uint*> (&(logProductIn[1]))));
 
    // update logProductIn
-   m->logProductIn[0] = *(reinterpret_cast<float_t*> (&logProductIn0));
-   m->logProductIn[1] = *(reinterpret_cast<float_t*> (&logProductIn1));
+   logProductIn[0] = *(reinterpret_cast<float_t*> (&logProductIn0));
+   logProductIn[1] = *(reinterpret_cast<float_t*> (&logProductIn1));
 }
 
 void update_priority_task(uint ts, uint m_id) {
-   uint update_ts;
    message_t *m = &messages[m_id];
    edge_t *e = &edges[m_id/2];
 
@@ -144,7 +142,9 @@ void update_priority_task(uint ts, uint m_id) {
                      + n->logNodePotentials[vali]
                      + (m->logProductIn[vali] - m->reverseLogMu[vali]);
          }
-         lookAhead[valj] = logSum(logsIn[0], logsIn[1]);
+         // split each logSum into a task
+         // lookAhead[valj] = logSum(logsIn[0], logsIn[1]);
+         enq_task_arg3(LOGSUM_TASK, ts+1, *(reinterpret_cast<uint*> (&logsIn[0])), *(reinterpret_cast<uint*> (&logsIn[1])), m_id, valj);
       }
    } else {
       for (uint32_t valj = 0; valj < 2; valj++) {
@@ -154,29 +154,89 @@ void update_priority_task(uint ts, uint m_id) {
                      + n->logNodePotentials[vali]
                      + (m->logProductIn[vali] - m->reverseLogMu[vali]);
          }
-         lookAhead[valj] = logSum(logsIn[0], logsIn[1]);
+         // split each logSum into a task
+         // lookAhead[valj] = logSum(logsIn[0], logsIn[1]);
+         enq_task_arg3(LOGSUM_TASK, ts+1, *(reinterpret_cast<uint*> (&logsIn[0])), *(reinterpret_cast<uint*> (&logsIn[1])), m_id, valj);
       }
    }
+
+   enq_task_arg3(UPDATE_LOOKAHEAD_TASK, ts+3, m_id, 0, 0, 0);
+}
+
+void logsum_task(uint ts, uint log1_id, uint log2_id, uint m_id, uint val) {
+   float_t log1 = *(reinterpret_cast<float_t*> (&log1_id));
+   float_t log2 = *(reinterpret_cast<float_t*> (&log2_id));
+   float_t res = logSum(log1, log2);
+
+   enq_task_arg3(WRITE_LOGSUM_TASK, ts+1, m_id, *(reinterpret_cast<uint*> (&res)), val, 0);
+}
+
+void write_logsum_task(uint ts, uint m_id, uint logSum, uint val) {
+   message_t *m = &messages[m_id];
+   float_t *lookAhead = m->lookAhead;
+
+   undo_log_write(reinterpret_cast<uint*> (&(lookAhead[val])), *(reinterpret_cast<uint*> (&(lookAhead[val]))));
+   lookAhead[val] = *(reinterpret_cast<float_t*> (&logSum));
+}
+
+void update_lookahead_task(uint ts, uint m_id) {
+   message_t *m = &messages[m_id];
+   float_t *lookAhead = m->lookAhead;
+
    float_t logTotalSum = logSum(lookAhead[0], lookAhead[1]);
 
    // normalization
    for (uint32_t valj = 0; valj < 2; valj++) {
       lookAhead[valj] -= logTotalSum;
    }
+   enq_task_arg3(EXP_TASK, ts+1, *(reinterpret_cast<uint*> (&(lookAhead[0]))), m_id, 1, 0);
+   enq_task_arg3(EXP_TASK, ts+1, *(reinterpret_cast<uint*> (&(lookAhead[1]))), m_id, 3, 0);
+   
+   // enqueue calculate residual task
+   enq_task_arg3(CALCULATE_RESIDUAL_TASK, ts+3, m_id, 0, 0, 0);
 
-   float_t residual = distance(m->logMu, lookAhead);
+   // enqueue update message task
+   enq_task_arg3(ENQ_UPDATE_MESSAGE_TASK, ts+4, m_id, 0, 0, 0);
+}
+
+void exp_task(uint ts, uint logMu_id, uint m_id, uint val) {
+   float_t logMu = *(reinterpret_cast<float_t*> (&logMu_id));
+   float_t res = expf(logMu);
+
+   enq_task_arg3(WRITE_EXP_TASK, ts+1, m_id, *(reinterpret_cast<uint*> (&res)), val, 0);
+}
+
+void write_exp_task(uint ts, uint m_id, uint exp, uint val) {
+   undo_log_write(reinterpret_cast<uint*> (&(messages[m_id].exp_buf[val])), *(reinterpret_cast<uint*> (&(messages[m_id].exp_buf[val]))));
+   messages[m_id].exp_buf[val] = *(reinterpret_cast<float_t*> (&exp));
+}
+
+void calculate_residual_task(uint ts, uint m_id, uint val, uint val2) {
+   float_t ans = 0.0;
+   float_t *exp_buf = messages[m_id].exp_buf;
+
+   ans += absval(exp_buf[0] - exp_buf[1]);
+   ans += absval(exp_buf[2] - exp_buf[3]);
+
+   messages[m_id].residual = ans;
+}
+
+void enq_update_message_task(uint ts, uint m_id) {
+   float_t residual = messages[m_id].residual;
+   float_t *lookAhead = messages[m_id].lookAhead;
+   uint32_t *enqueued_ts_ptr = &(messages[m_id].enqueued_ts);
 
    if (residual > sensitivity) {
-      update_ts = timestamp(residual);
+      float_t update_ts = timestamp(residual);
       
       if (update_ts > ts) {
-         undo_log_write(reinterpret_cast<uint*> (&(m->enqueued_ts)), m->enqueued_ts);
-         m->enqueued_ts = update_ts;
-         enq_task_arg2(UPDATE_MESSAGE_TASK, update_ts, m_id, *(reinterpret_cast<uint*> (&(lookAhead[0]))), *(reinterpret_cast<uint*> (&(lookAhead[1]))));
+         undo_log_write(reinterpret_cast<uint*> (enqueued_ts_ptr), *enqueued_ts_ptr);
+         *enqueued_ts_ptr = update_ts;
+         enq_task_arg3(UPDATE_MESSAGE_TASK, update_ts, m_id, *(reinterpret_cast<uint*> (&(lookAhead[0]))), *(reinterpret_cast<uint*> (&(lookAhead[1]))), 0);
       } else {
-         undo_log_write(reinterpret_cast<uint*> (&(m->enqueued_ts)), m->enqueued_ts);
-         m->enqueued_ts = ts + 1;
-         enq_task_arg2(UPDATE_MESSAGE_TASK, ts + 1, m_id, *(reinterpret_cast<uint*> (&(lookAhead[0]))), *(reinterpret_cast<uint*> (&(lookAhead[1]))));
+         undo_log_write(reinterpret_cast<uint*> (enqueued_ts_ptr), *enqueued_ts_ptr);
+         *enqueued_ts_ptr = ts + 1;
+         enq_task_arg3(UPDATE_MESSAGE_TASK, ts + 1, m_id, *(reinterpret_cast<uint*> (&(lookAhead[0]))), *(reinterpret_cast<uint*> (&(lookAhead[1]))), 0);
       }
    }
 }
@@ -193,7 +253,7 @@ void update_message_task(uint ts, uint m_id, uint lookAhead0, uint lookAhead1) {
    float_t diff[2];
    diff[0] = *(reinterpret_cast<float_t*> (&lookAhead0)) - m->logMu[0];
    diff[1] = *(reinterpret_cast<float_t*> (&lookAhead1)) - m->logMu[1];
-   enq_task_arg2(UPDATE_LOGPRODUCTIN_TASK, ts+1, (m->j) + (2 * numE), *(reinterpret_cast<uint*> (&diff[0])), *(reinterpret_cast<uint*> (&diff[1])));
+   enq_task_arg3(UPDATE_LOGPRODUCTIN_TASK, ts+1, (m->j) + (2 * numE), *(reinterpret_cast<uint*> (&diff[0])), *(reinterpret_cast<uint*> (&diff[1])), 0);
 
    // update logMu
    undo_log_write(reinterpret_cast<uint*> (&(m->logMu[0])), *(reinterpret_cast<uint*> (&(m->logMu[0]))));
@@ -231,7 +291,7 @@ void update_message_task(uint ts, uint m_id, uint lookAhead0, uint lookAhead1) {
          CSC_position++;
       }
       if (affected_mid != reverse_mid) {
-         enq_task_arg2(PRIORITIZE_TASK, ts + 1, affected_mid, 0, 0);
+         enq_task_arg3(PRIORITIZE_TASK, ts + 1, affected_mid, 0, 0, 0);
       }
    }
 }
@@ -256,8 +316,8 @@ int main() {
 
    while (1) {
       uint ttype, ts, object;
-      uint arg0, arg1;
-      deq_task_arg2(&ttype, &ts, &object, &arg0, &arg1);
+      uint arg0, arg1, arg2;
+      deq_task_arg3(&ttype, &ts, &object, &arg0, &arg1, &arg2);
       switch(ttype){
          case INIT_TASK:
             init_task(ts);
@@ -279,6 +339,27 @@ int main() {
             break;
          case UPDATE_PRIORITY_TASK:
             update_priority_task(ts, object);
+            break;
+         case LOGSUM_TASK:
+            logsum_task(ts, object, arg0, arg1, arg2);
+            break;
+         case WRITE_LOGSUM_TASK:
+            write_logsum_task(ts, object, arg0, arg1);
+            break;
+         case UPDATE_LOOKAHEAD_TASK:
+            update_lookahead_task(ts, object);
+            break;
+         case EXP_TASK:
+            exp_task(ts, object, arg0, arg1);
+            break;
+         case WRITE_EXP_TASK:
+            write_exp_task(ts, object, arg0, arg1);
+            break;
+         case CALCULATE_RESIDUAL_TASK:
+            calculate_residual_task(ts, object, arg0, arg1);
+            break;
+         case ENQ_UPDATE_MESSAGE_TASK:
+            enq_update_message_task(ts, object);
             break;
          case UPDATE_MESSAGE_TASK:
             update_message_task(ts, object, arg0, arg1);

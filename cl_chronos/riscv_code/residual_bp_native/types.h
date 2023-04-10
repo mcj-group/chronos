@@ -14,8 +14,7 @@ typedef struct Message {
    uint32_t j;
    uint32_t enqueued_ts;
 
-   // pad struct to 64 bytes
-   // padding doesn't matter for single-tile chronos
+   // padding
    uint32_t padding[7];
 } message_t;
 
