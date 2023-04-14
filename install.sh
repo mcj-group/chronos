@@ -1,3 +1,4 @@
+
 #!/bin/bash
 if [ -e aws-fpga ] 
 then
@@ -23,7 +24,4 @@ sudo yum install kernel kernel-devel
 sudo modprobe xdma
 
 ## Needed for plotting
-sudo apt-get install python-matplotlib
-
-## Needed for xsim
-sudo apt-get install libncurses5
+sudo yum install python-matplotlib
