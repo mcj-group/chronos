@@ -506,6 +506,7 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 	}
 
 	// Stage 1: Read input file and transfer to the FPGA
+	printf("Stage 1: Read input file and transfer to the FPGA\n");
 	printf("File %p\n", fg);
 	write_buffer = (unsigned char *)malloc(1600*1024*1024);
 	uint32_t* headers = (uint32_t*) write_buffer;
@@ -602,9 +603,11 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 		load_code();
 	}
 	printf("Loading code... Success\n");
+	printf("Stage 1: Done\n");
 
 
 	// Stage 2: Intialize Task-spilling data structures
+	printf("Stage 2: Initializing spill area\n");
 	unsigned char* spill_area = (unsigned char*) malloc(TOTAL_SPILL_ALLOCATION);
 	for (int i=0;i<4;i++) spill_area[STACK_PTR_ADDR_OFFSET +i] = 0;
 	for (int i=0;i< (1<<LOG_SPLITTER_STACK_SIZE) ; i++) {
@@ -620,6 +623,7 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 				SCRATCHPAD_END_OFFSET,
 				ADDR_BASE_SPILL + i*TOTAL_SPILL_ALLOCATION);
 	}
+	printf("Stage 2: Done\n");
 	uint64_t cycles;
 	int num_errors = 0;
 
@@ -627,6 +631,7 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 
 
 	// Stage 3: Global Initialization
+	printf("Stage 3: Global Initialization\n");
 
 	// for debug logs (if enabled in config)
 	FILE* fwtu = fopen("task_unit_log", "w");
@@ -756,8 +761,10 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 	pci_poke(0, ID_L2_RO, L2_LOG_BVALID, 1);
 
 	if (endCycle == startCycle) return -1; // OCL_BUS is broken -> abort!!
+	printf("Stage 3: Done\n");
 
 	// Stage 4 : Application-specific initialization
+	printf("Stage 4: Application-specific initialization\n");
 
 	pci_poke(0, ID_OCL_SLAVE, OCL_TASK_ENQ_TTYPE, 0 );
 	pci_poke(0, ID_OCL_SLAVE, OCL_TASK_ENQ_ARG_WORD, 0 );
@@ -858,10 +865,11 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 			break;
 
 	}
-	printf("Starting Applicaton\n");
+	printf("Stage 4: Done\n");
+	
 
 	// Stage 5: Start Application
-
+	printf("Stage 5: Starting Applicaton\n");
 	for (int i=0;i<N_TILES;i++) {
 		// Number of remaining dequues
 		pci_poke(i, ID_ALL_APP_CORES, CORE_N_DEQUEUES ,0xfffffff);
@@ -899,10 +907,12 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 	}
 
 	usleep(2);
+	printf("Stage 5: Done\n");
 
-	printf("Waiting until app completes\n");
+	
 
 	// Stage 6: Wait until Application completes
+	printf("Stage 6: Waiting until app completes\n");
 
 	ocl_data = 0;
 	uint32_t* results;
@@ -1024,9 +1034,10 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 		pci_poke(i, ID_L2_RO, L2_FLUSH , 1 );
 		usleep(100000);
 	}
+	printf("Stage 6: Done\n");
 
 	// Stage 7: Application completed. Read counters for analysis.
-
+	printf("Stage 7: Read counters for analysis\n");
 	if (!NO_ROLLBACK) {
 		cq_stats(0, cycles);
 	}
@@ -1112,8 +1123,10 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 				total_tasks);
 	printf("Task Unit contention %5.2f%%\n", task_unit_contention);
 
+	printf("Stage 7: Done\n");
 
-		// Stage 8: application specific verification
+	// Stage 8: application specific verification
+	printf("Stage 8: Application specific verification\n");
 
 	printf("Flush completed, reading results..\n");
 	ocl_data = 1;
@@ -1376,6 +1389,7 @@ int test_chronos(int slot_id, int pf_id, int bar_id, FILE* fg, int app) {
 			break;
 
    }
+   printf("Stage 8: Done\n");
 
    if (write_buffer != NULL) {
 	   free(write_buffer);
