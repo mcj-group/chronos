@@ -20,3 +20,5 @@ sssp_r_8t agfi-01ed0f2fdee90a514 abcd-fg
 riscv_rate_ctrl_nr_4t agfi-00bc8e8fd0139a989 na
 astar_nr_1t agfi-0dc1ac81aac25f995 na
 sssp_nr_1t agfi-057571a7b52f9a0cd na
+riscv_fs_r_1tx1c agfi-010e3a9e1aad5b6f7 afi-083ba0c82fec13b38
+riscv_fs_r_1tx16c agfi-0b7648df57a5f1141 afi-0e690c59c4bb606eb
